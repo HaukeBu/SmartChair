@@ -41,13 +41,17 @@ class HALThread(threading.Thread):
 		self.daemon = True
 
 		self.interval_back = int(Config.config['GYROSCOPE_BACK']['Interval'])
-		self.interval_seat = int(Config.config['GYROSCOPE_SEAT']['Interval'])
+		if self.interval_back > 0:
+			print("Add new callback function for GYROSCOPE_BACK, Interval = " + str(self.interval_back))
 
+		self.interval_seat = int(Config.config['GYROSCOPE_SEAT']['Interval'])
+		if self.interval_seat > 0:
+			print("Add new callback function for GYROSCOPE_SEAT, Interval = " + str(self.interval_seat))
 		self.next_back = 0
 		self.next_seat = 0
 
 	def __getMillis(self):
-		millis = int(round(time.time() * 1000))
+		return int(round(time.time() * 1000))
 
 	def __sleepTime(self):
 		if self.interval_back > 0 and self.interval_seat == 0:
@@ -60,7 +64,7 @@ class HALThread(threading.Thread):
 
 	def run(self):
 		hal_sensors = hal.HAL()
-		if self.interval_back > 0 || self.interval_seat > 0:
+		if self.interval_back > 0 or self.interval_seat > 0:
 			while True:
 				if self.interval_back > 0 and self.next_back <= self.__getMillis():
 					sensor_data = hal_sensors.getGyroBack()

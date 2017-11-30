@@ -37,7 +37,8 @@ class GRPCHeader(Enum):
 	PRESSURE_BACK = 2
 	PRESSURE_SEAT = 3
 	TEMPERATURE = 4
-	GYROSCOPE = 5
+	GYROSCOPE_BACK = 5
+	GYROSCOPE_SEAT = 6
 
 class SerialDispatchError(Enum):
 	NO_TERMINATION_BYTE = 1

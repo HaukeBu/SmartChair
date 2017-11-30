@@ -54,13 +54,17 @@ class HALThread(threading.Thread):
 		return int(round(time.time() * 1000))
 
 	def __sleepTime(self):
+		ret = 0
+	
 		if self.interval_back > 0 and self.interval_seat == 0:
-			return self.next_back - self.__getMillis()
+			ret = self.next_back - self.__getMillis()
 		elif self.interval_seat > 0 and self.interval_back == 0:
-			return self.next_seat - self.__getMillis()
+			ret = self.next_seat - self.__getMillis()
 		else:
-			return min(self.next_back - self.__getMillis()
-						, self.next_seat - self.__getMillis())
+			ret = min(self.next_back - self.__getMillis()
+					, self.next_seat - self.__getMillis())
+
+		return ret / 1000
 
 	def run(self):
 		hal_sensors = hal.HAL()

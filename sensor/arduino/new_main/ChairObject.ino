@@ -1,231 +1,198 @@
-#define VERSION                 1
+#include "crc16.h"
 
-#define SERIAL_BAUDRATE         38400
+#define VERSION					1
 
-#define PRESSURE_S0_PIN         8
-#define PRESSURE_S1_PIN         9
-#define PRESSURE_S2_PIN         10
+#define SERIAL_BAUDRATE			38400
 
-#define TEMPERATURE_POWER_PIN   11
-#define TEMPERATURE_DATA_PIN    12
+#define PRESSURE_S0_PIN			8
+#define PRESSURE_S1_PIN			9
+#define PRESSURE_S2_PIN			10
 
-#define PRESSURE_SEAT_PIN       A0
-#define PRESSURE_BACK_PIN       A1
-#define DISTANCE_PIN            A2
+#define TEMPERATURE_POWER_PIN	11
+#define TEMPERATURE_DATA_PIN	12
 
-#define BACK_PRESSURE_SENSORS   6
-#define SEAT_PRESSURE_SENSORS   4
+#define PRESSURE_SEAT_PIN		A0
+#define PRESSURE_BACK_PIN		A1
+#define DISTANCE_PIN			A2
 
-#define SERIAL_START            0xAF
-#define SERIAL_END              0xFE
+#define BACK_PRESSURE_SENSORS	6
+#define SEAT_PRESSURE_SENSORS	4
 
-#define CRC16MASK               0xA001
+#define SERIAL_START			0xAF
+#define SERIAL_END				0xFE
+
+#define CRC16MASK				0x8005
 
 enum Header{
-  DEBUG,
-  DISTANCE,
-  PRESSURE_BACK,
-  PRESSURE_SEAT,
-  TEMPERATURE
+	DEBUG,
+	DISTANCE,
+	PRESSURE_BACK,
+	PRESSURE_SEAT,
+	TEMPERATURE
 };
-
-/*
- * Arduino Setup
- * Configure serial channel to PI and initialize pins.
- */
-void setup(){
-    Serial.begin(SERIAL_BAUDRATE);
-  
-    pinMode(PRESSURE_S0_PIN, OUTPUT);
-    pinMode(PRESSURE_S1_PIN, OUTPUT);
-    pinMode(PRESSURE_S2_PIN, OUTPUT); 
-  
-    digitalWrite(PRESSURE_S0_PIN, LOW);
-    digitalWrite(PRESSURE_S1_PIN, LOW);
-    digitalWrite(PRESSURE_S2_PIN, LOW);
-  
-    pinMode(TEMPERATURE_POWER_PIN, OUTPUT);
-    digitalWrite(TEMPERATURE_POWER_PIN, LOW);
-    
-    pinMode(TEMPERATURE_DATA_PIN, INPUT);
-}
-
-/*
- * Arduino Loop
- * Read and send sensor values.
- */
-void loop(){
-    uint16_t pressure_values_back[BACK_PRESSURE_SENSORS] = {0};
-    uint16_t pressure_values_seat[SEAT_PRESSURE_SENSORS] = {0};
-    uint16_t temperature = 0;
-    uint16_t distance = 0;
-
-    getDistance(&distance);
-    getPressure(pressure_values_back, pressure_values_seat, BACK_PRESSURE_SENSORS, SEAT_PRESSURE_SENSORS);
-    getTemperature(&temperature);
-    
-    sendData(DISTANCE, 1, &distance);
-    sendData(PRESSURE_BACK, BACK_PRESSURE_SENSORS, pressure_values_back);
-    sendData(PRESSURE_SEAT, SEAT_PRESSURE_SENSORS, pressure_values_seat);
-    sendData(TEMPERATURE, 1, &temperature);
-}
-
-uint16_t crc16(char* data, char len){
-    uint16_t ret = 0;
-  
-    for (int i = 0; i < len; i++)
-    {
-        if ( ((ret >> 15) & 1) != data[i]){
-            ret = (ret << 1) ^ CRC16MASK;
-        } else {
-            ret = (ret << 1);
-        }
-    }
-
-    return ret;
-}
 
 /**
  * Send data over serial interface
  * Protocol:
- *      8          8         8         8        n * 16      16       8
- *  |--0xAF--|--Version--|--Type--|--Length--|--Payload--|--CRC--|--0xFE--|
- *  
- * Fields with a length of over 8 bits send their data with the first byte first
+ *		8			8		 8			8		n * 16		16		 8
+ *	|--0xAF--|--Version--|--Type--|--Length--|--Payload--|--CRC--|--0xFE--|
+ *	
+ * Fields with a length of over 8 bits send their data LSB first
  */
 void sendData(Header h, char len, uint16_t* payload){
-    char* buf[255] = {0};
+	char buf[255] = {0};
+	int i = 0;
+	int j = 0;
 
-    buf[0] = VERSION;
-    buf[1] = (char) h;
-    buf[2] = len;
-    for (int i = 0, int j = 0; i < len; i++, j = j + 2){
-      uint16_t temp = payload[i];
-      
-      buf[3 + j    ] = (char) (temp & 0xFF);
-      buf[3 + j + 1] = (char) (temp >> 8);      
-    }
+	buf[0] = VERSION;
+	buf[1] = (char) h;
+	buf[2] = len;
+	for (i = 0, j = 0; i < len; i++, j = j + 2){
+		uint16_t temp = payload[i];
+		
+		buf[3 + j    ] = (uint8_t) (temp & 0xFF);		
+		buf[3 + j + 1] = (uint8_t) (temp >> 8);	
+	}
 
-    uint16_t crc = crc16(buf, len+3);
-    
-    Serial.write(SERIAL_START);
-  
-    /*Serial.write(VERSION);
+	uint16_t crc = crc16_ccitt(buf, len*2+3);
+	
+#ifndef TEST_MODE
+	Serial.write(SERIAL_START);
 
-    Serial.write((char) h);
+	Serial.write(buf, len*2+3);
 
-    Serial.write(len);
+	Serial.write((char) (crc & 0xFF));
+	Serial.write((char) (crc >> 8));
 
-    for (int i = 0; i < len; i++){
-      uint16_t temp = payload[i];
+	Serial.write(SERIAL_END);
+#else 
+	Serial::write(SERIAL_START);
 
-      Serial.write((char) (temp & 0xFF));
-      Serial.write((char) (temp >> 8));
-    }*/
+	
+	Serial::write(buf, len*2+3);
 
-    Serial.write(buf, len+3);
+	Serial::write((char) (crc & 0xFF));
+	Serial::write((char) (crc >> 8));
 
-    Serial.write((char) (crc & 0xFF));
-    Serial.write((char) (crc >> 8));
-  
-    Serial.write(SERIAL_END);
+	Serial::write(SERIAL_END);
+#endif
+	   
 }
 
 /***********************************************************
  * Temperature Sensor
  ***********************************************************/
 
+#ifndef TEST_MODE
 uint8_t readByte(int pin){
-    uint16_t value = 0;
+	uint16_t value = 0;
 
-    // start sequence
-    while(digitalRead(pin));
-    while(!digitalRead(pin));
-        
-    // read 8 bits and a parity bit
-    for(int i = 0; i < 9; ++i) {
+	// start sequence
+	while(digitalRead(pin));
+	while(!digitalRead(pin));
+			
+	// read 8 bits and a parity bit
+	for(int i = 0; i < 9; ++i) {
 
-        while(digitalRead(pin));
-        delayMicroseconds(60);
+		while(digitalRead(pin));
+		delayMicroseconds(60);
 
-        if(digitalRead(pin)) {
-            value |= 1 << (8 - i);
-        } else {
-            while(!digitalRead(pin));
-        }
-    }
+		if(digitalRead(pin)) {
+			value |= 1 << (8 - i);
+		} else {
+			while(!digitalRead(pin));
+		}
+	}
 
-    return (uint8_t) (value >> 1);
+	return (uint8_t) (value >> 1);
 }
+#endif
 
-int16_t readTemperature(int pin){
-  uint8_t b1 = readByte(pin);
-  uint8_t b2 = readByte(pin);
-  
-  return (b1 << 8) | b2;
+uint16_t readTemperature(int pin){
+	uint8_t b1 = readByte(pin);
+	uint8_t b2 = readByte(pin);
+	uint16_t ret = (b1 << 8) | b2;
+		
+	return ret;
 }
 
 uint16_t digitalTemperatureToCelsius(int16_t temperature_in){
-  int16_t temperature_out = 0.0f;
-  float temp = (float) temperature_in;
+	int16_t temperature_out = 0.0f;
+	float temp = (float) temperature_in;
+		
+	// as seen in data sheet of "Temperature TSIC306"
+	temp = (temp / 2047.0f * 200.0f) - 50.0f;
+	temperature_out = (int16_t) temp;
 
-  // as seen in data sheet of "Temperature TSIC306"
-  temp = (temp / 2047.0f * 200.0f) - 50.0f;
-  temperature_out = (int16_t) temp;
-
-  return temperature_out;
+	return temperature_out;
 }
 
 void getTemperature(uint16_t* temp_out){
-  uint16_t temperature = 0;
+#ifdef TEST_MODE
+	cout << "\n****In getTemperature()" << endl;
+#endif
 
-  // activate sensor
-  digitalWrite(TEMPERATURE_POWER_PIN, HIGH);  
+	uint16_t temperature = 0;
 
-  // wait for measurement
-  delayMicroseconds(60);  
+	// activate sensor
+	digitalWrite(TEMPERATURE_POWER_PIN, HIGH);	
 
-  // get data from sensor
-  temperature = readTemperature(TEMPERATURE_DATA_PIN); 
+	// wait for measurement
+	delayMicroseconds(60);	
 
-  // deactivate sensor
-  digitalWrite(TEMPERATURE_POWER_PIN, LOW);  
+	// get data from sensor
+	temperature = readTemperature(TEMPERATURE_DATA_PIN); 
 
-  *temp_out = digitalTemperatureToCelsius(temperature); 
+	// deactivate sensor
+	digitalWrite(TEMPERATURE_POWER_PIN, LOW);	
+
+	*temp_out = digitalTemperatureToCelsius(temperature);
+	
+#ifdef TEST_MODE
+	cout << "****Leaving getTemperature()\n" << endl;
+#endif
 }
 
 
 
 /***********************************************************
- * Pressure Sensor TODO
+ * Pressure Sensor
  ***********************************************************/
 
 void getPressure(uint16_t* pressure_values_back, uint16_t* pressure_values_seat, int back_len, int seat_len){
-  int max_index = 0;
+#ifdef TEST_MODE
+	cout << "\n****In getPressure()" << endl;
+#endif
 
-  // determine the maximum address to be indexed
-  max_index = max(back_len, seat_len);
+	int max_index = 0;
 
-  for (int i = 0; i < max_index; i++){
-    // send every address up until the maximum index to the 74HC4051
-    digitalWrite(PRESSURE_S0_PIN, (i & 0x1) ? HIGH : LOW);
-    digitalWrite(PRESSURE_S1_PIN, (i & 0x2) ? HIGH : LOW);
-    digitalWrite(PRESSURE_S2_PIN, (i & 0x4) ? HIGH : LOW);
+	// determine the maximum address to be indexed
+	max_index = max(back_len, seat_len);
 
-    // if the address is within the range of accessible sensors, read its value
-    if (i < back_len){
-      pressure_values_back[i] = analogRead(PRESSURE_BACK_PIN);
-    }
+	for (int i = 0; i < max_index; i++){
+		// send every address up until the maximum index to the 74HC4051
+		digitalWrite(PRESSURE_S0_PIN, (i & 0x1) ? HIGH : LOW);
+		digitalWrite(PRESSURE_S1_PIN, (i & 0x2) ? HIGH : LOW);
+		digitalWrite(PRESSURE_S2_PIN, (i & 0x4) ? HIGH : LOW);
 
-    if (i < seat_len){      
-      pressure_values_seat[i] = analogRead(PRESSURE_SEAT_PIN);
-    }
-  }
+		// if the address is within the range of accessible sensors, read its value
+		if (i < back_len){
+			pressure_values_back[i] = analogRead(PRESSURE_BACK_PIN);
+		}
 
-  // reset addressing
-  digitalWrite(PRESSURE_S0_PIN, LOW);
-  digitalWrite(PRESSURE_S1_PIN, LOW);
-  digitalWrite(PRESSURE_S2_PIN, LOW);
+		if (i < seat_len){			
+			pressure_values_seat[i] = analogRead(PRESSURE_SEAT_PIN);
+		}
+	}
+
+	// reset addressing
+	digitalWrite(PRESSURE_S0_PIN, LOW);
+	digitalWrite(PRESSURE_S1_PIN, LOW);
+	digitalWrite(PRESSURE_S2_PIN, LOW);
+	
+#ifdef TEST_MODE
+	cout << "****Leaving getPressure()\n" << endl;
+#endif
 }
 
 
@@ -234,6 +201,79 @@ void getPressure(uint16_t* pressure_values_back, uint16_t* pressure_values_seat,
  ***********************************************************/
 
 void getDistance(uint16_t* distance_out){
-  *distance_out = (uint16_t) analogRead(DISTANCE_PIN);
+#ifdef TEST_MODE
+	cout << "\n****In getDistance()" << endl;
+#endif
+
+	*distance_out = (uint16_t) analogRead(DISTANCE_PIN);
+	
+#ifdef TEST_MODE
+	cout << "****Leaving getDistance()\n" << endl;
+#endif
 }
 
+
+/*
+ * Arduino Setup
+ * Configure serial channel to PI and initialize pins.
+ */
+void setup(){
+#ifdef TEST_MODE
+		cout << "\n****In setup()" << endl;
+		Serial::begin(SERIAL_BAUDRATE);
+#else
+	Serial.begin(SERIAL_BAUDRATE);
+#endif
+	
+	pinMode(PRESSURE_S0_PIN, OUTPUT);
+	pinMode(PRESSURE_S1_PIN, OUTPUT);
+	pinMode(PRESSURE_S2_PIN, OUTPUT); 
+
+	digitalWrite(PRESSURE_S0_PIN, LOW);
+	digitalWrite(PRESSURE_S1_PIN, LOW);
+	digitalWrite(PRESSURE_S2_PIN, LOW);
+
+	pinMode(TEMPERATURE_POWER_PIN, OUTPUT);
+	digitalWrite(TEMPERATURE_POWER_PIN, LOW);
+	
+	pinMode(TEMPERATURE_DATA_PIN, INPUT);
+		
+#ifdef TEST_MODE		
+		cout << "****Leaving setup()\n" << endl;
+#endif
+}
+
+/*
+ * Arduino Loop
+ * Read and send sensor values.
+ */
+void loop(){
+	uint16_t pressure_values_back[BACK_PRESSURE_SENSORS] = {0};
+	uint16_t pressure_values_seat[SEAT_PRESSURE_SENSORS] = {0};
+	uint16_t temperature = 0;
+	uint16_t distance = 0;
+
+	getDistance(&distance);
+	getPressure(pressure_values_back, pressure_values_seat, BACK_PRESSURE_SENSORS, SEAT_PRESSURE_SENSORS);
+	getTemperature(&temperature);
+	
+#ifdef TEST_MODE
+	cout << "\n****Send Distance" << endl;
+#endif		
+	sendData(DISTANCE, 1, &distance);
+		
+#ifdef TEST_MODE
+	cout << "\n****Send Back Pressure" << endl;
+#endif 
+	sendData(PRESSURE_BACK, BACK_PRESSURE_SENSORS, pressure_values_back);
+		
+#ifdef TEST_MODE
+	cout << "\n****Send Seat Pressure" << endl;
+#endif		 
+	sendData(PRESSURE_SEAT, SEAT_PRESSURE_SENSORS, pressure_values_seat);
+		
+#ifdef TEST_MODE
+	cout << "\n****Send Temperature" << endl;
+#endif		
+	sendData(TEMPERATURE, 1, &temperature);
+}

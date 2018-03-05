@@ -47,19 +47,21 @@ def get_accelerator_values():
 
 def get_gyro_values():
     gyro_list = []
-    gyro_x1_out = read_word_2c(gyro_address_first, 0x43)
-    gyro_y1_out = read_word_2c(gyro_address_first, 0x45)
-    gyro_z1_out = read_word_2c(gyro_address_first, 0x47)
-    gyro_x2_out = read_word_2c(gyro_address_second, 0x43)
-    gyro_y2_out = read_word_2c(gyro_address_second, 0x45)
-    gyro_z2_out = read_word_2c(gyro_address_second, 0x47)
+	
+	# Accelerator
+	gyro_list.append(read_word_2c(gyro_address_first, 0x3b)
+    gyro_list.append(read_word_2c(gyro_address_first, 0x3d)
+    gyro_list.append(read_word_2c(gyro_address_first, 0x3f)
+    gyro_list.append(read_word_2c(gyro_address_second, 0x3b)
+    gyro_list.append(read_word_2c(gyro_address_second, 0x3d)
+    gyro_list.append(read_word_2c(gyro_address_second, 0x3f)
 
-    gyro_list.append(gyro_x1_out)
-    gyro_list.append(gyro_y1_out)
-    gyro_list.append(gyro_z1_out)
-    gyro_list.append(gyro_x2_out)
-    gyro_list.append(gyro_y2_out)
-    gyro_list.append(gyro_z2_out)
+	# Gyroscope
+    gyro_list.append(read_word_2c(gyro_address_first, 0x43))
+    gyro_list.append(read_word_2c(gyro_address_first, 0x45))
+    gyro_list.append(read_word_2c(gyro_address_first, 0x47))
+    gyro_list.append(read_word_2c(gyro_address_second, 0x43))
+    gyro_list.append(read_word_2c(gyro_address_second, 0x45))
+    gyro_list.append(read_word_2c(gyro_address_second, 0x47))
 
     return gyro_list
-

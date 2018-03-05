@@ -1,5 +1,5 @@
 import serial
-import crc16
+import CRC16
 from enum import Enum
 
 VERSION = 1
@@ -63,7 +63,7 @@ class SerialDispatcher():
 			return DispatchError.NO_TERMINATION_BYTE
 
 		# TODO write crc16 module
-		if crc != crc16.crc16_ccitt(buffer, buffer[2]):
+		if crc != CRC16.crc16_ccitt(buffer, buffer[2]):
 			return DispatchError.CHECKSUM_ERROR
 
 		if buffer[0] != VERSION:

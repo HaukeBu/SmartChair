@@ -1,43 +1,25 @@
 import threading
-import time
 
+class SerialThread(threading.Thread):
+	def __init__(self, serial):
+		threading.Thread.__init__(self)
+		self.daemon = True
 
-class MQCommunicator (threading.Thread):
-    def __init__(self, thread_id, name, counter, json_queue, communicator):
-        threading.Thread.__init__(self)
-        self.thread_id = thread_id
-        self.name = name
-        self.counter = counter
-        self.q = json_queue
-        self.communicator = communicator
+		self.ser_dispatcher = serial
 
-        self.daemon = True
+	def run(self):
+		while True:
+			self.ser_dispatcher.dispatch()
 
-    def run(self):
-        self.communicator.setup_connection()
-        while True:
-            to_send = self.q.get()
-            self.communicator.send(to_send)
+class HALThread(threading.Thread):
+	def __init__(self, hal):
+		threading.Thread.__init__(self)
+		self.daemon = True
 
+		self.hal = hal
 
-class SensorEvaluator (threading.Thread):
-    def __init__(self, thread_id, name, counter, interval_in_sec, json_queue, hal_function):
-        threading.Thread.__init__(self)
-        self.thread_id = thread_id
-        self.name = name
-        self.counter = counter
-        self.q = json_queue
-        self.function = hal_function
-        self.interval_in_sec = interval_in_sec
+	def run(self):
+		while True:
+			sensor_data = self.hal.getGyro()
 
-        self.daemon = True
-
-    def run(self):
-        time.sleep(0.5)
-        while True:
-            to_send = self.function(time.time()*1000)
-
-            for json in to_send:
-                self.q.put(json)
-
-            time.sleep(self.interval_in_sec)
+			

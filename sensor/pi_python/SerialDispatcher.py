@@ -1,20 +1,9 @@
 import serial
 import CRC16
+import Constants
 from enum import Enum
 
 VERSION = 1
-
-class Header(Enum):
-	DEBUG = 0
-	DISTANCE = 1
-	PRESSURE_BACK = 2
-	PRESSURE_SEAT = 3
-	TEMPERATURE = 4
-
-class DispatchError(Enum):
-	NO_TERMINATION_BYTE = 1
-	CHECKSUM_ERROR = 2
-	VERSION_ERROR = 3
 
 class SerialDispatcher():
 	def __init__(self):
@@ -60,14 +49,14 @@ class SerialDispatcher():
 		crc = (crc2 << 8) | crc1
 
 		if self.ser_con.read(1) != 0xFE:
-			return DispatchError.NO_TERMINATION_BYTE
+			return SerialDispatchError.NO_TERMINATION_BYTE
 
 		# TODO write crc16 module
 		if crc != CRC16.crc16_ccitt(buffer, buffer[2]):
-			return DispatchError.CHECKSUM_ERROR
+			return SerialDispatchError.CHECKSUM_ERROR
 
 		if buffer[0] != VERSION:
-			return DispatchError.VERSION_ERROR
+			return SerialDispatchError.VERSION_ERROR
 
 		payload = []
 		for i in range(3, buffer[2], 2):

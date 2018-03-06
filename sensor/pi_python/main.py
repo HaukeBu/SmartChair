@@ -2,9 +2,9 @@ import Threads
 
 import SerialDispatcher as sd
 import Callbacks as cb
-import HAL as hal
 
 BAUDRATE = 38400
+SERVER_IP = "localhost:50051"
 
 def main():
 	port = getSerialPort()
@@ -22,17 +22,18 @@ def main():
 	dispatcher.appendCallback(Header.PRESSURE_SEAT, cb.pressureSeat)
 	dispatcher.appendCallback(Header.TEMPERATURE, cb.temperature)
 
-	pi_sensors = hal.HAL()
-
 
 	serial_thread = Threads.SerialThread(dispatcher)
-	hal_thread = Threads.HALThread(pi_sensors)
+	hal_thread = Threads.HALThread()
+	message_thread = Threads.MessageThread()
 
 	serial_thread.start()
 	hal_thread.start()
+	message_thread.start()
 
 	serial_thread.join()
 	hal_thread.join()
+	message_thread.join()
 
 
 def getSerialPort():

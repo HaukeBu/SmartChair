@@ -17,8 +17,8 @@ class DispatchError(Enum):
 	VERSION_ERROR = 3
 
 class SerialDispatcher():
-    def __init__(self):
-        self.callback_list = []
+	def __init__(self):
+		self.callback_list = []
 
 	def initialize(self, port, baudrate):
 		self.ser_con = serial.Serial()
@@ -38,9 +38,9 @@ class SerialDispatcher():
 	def appendCallback(self, idx, cb):
 		self.callback_list[idx] = cb
 
-    def dispatch(self):
+	def dispatch(self):
 		# Read until start sequence occurs
-        while self.ser_con.read(1) != 0xAF:
+		while self.ser_con.read(1) != 0xAF:
 
 		buffer = []
 		# Version

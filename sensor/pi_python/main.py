@@ -3,6 +3,7 @@ import Threads
 import SerialDispatcher as sd
 import Callbacks as cb
 import os
+import Constants
 
 BAUDRATE = 38400
 SERVER_IP = "localhost:50051"
@@ -17,11 +18,11 @@ def main():
 	dispatcher = sd.SerialDispatcher()
 
 	# Add callback functions to serial dispatcher
-	dispatcher.appendCallback(Header.DEBUG, cb.debug)
-	dispatcher.appendCallback(Header.DISTANCE, cb.distance)
-	dispatcher.appendCallback(Header.PRESSURE_BACK, cb.pressureBack)
-	dispatcher.appendCallback(Header.PRESSURE_SEAT, cb.pressureSeat)
-	dispatcher.appendCallback(Header.TEMPERATURE, cb.temperature)
+	dispatcher.appendCallback(Constants.SerialHeader.DEBUG, cb.debug)
+	dispatcher.appendCallback(Constants.SerialHeader.DISTANCE, cb.distance)
+	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_BACK, cb.pressureBack)
+	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_SEAT, cb.pressureSeat)
+	dispatcher.appendCallback(Constants.SerialHeader.TEMPERATURE, cb.temperature)
 
 	dispatcher.initialize(port, BAUDRATE)
 

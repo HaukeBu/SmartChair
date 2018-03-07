@@ -55,16 +55,16 @@ void delayMicroseconds(int i){
 
 class Serial{
 public:
-	static void begin(int baudrate){
+	static begin(int baudrate){
 		cout << "Initialize serial with baudrate " << baudrate << endl;
 	};
 
-	static void write(char c){
+	static write(char c){
 		string binary = bitset<8>(c).to_string();
 		cout << "Serial char: " << binary << "(" << +c << ")" << endl;
 	};
 
-	static void write(char* buf, char len){
+	static write(char* buf, char len){
 		cout << "Serial bulk:";
 		for(int i = 0; i < len; i++){
 			string binary = bitset<8>(buf[i]).to_string();
@@ -76,7 +76,7 @@ private:
 	Serial();
 };
 
-#include "ChairObject.ino"
+#include "../ChairObject.ino"
 
 bool temperatureConversionTest(){
 	bool ret = true;
@@ -109,28 +109,22 @@ bool temperatureConversionTest(){
 }
 
 int main(){
-		int i = 0;
+	int i = 0;
 	srand(time(NULL));
 
-		cout << "*************Manual tests*************" << endl;
+	cout << "*************Manual tests*************" << endl;
 	setup();
 
 	for (i = 0; i < LOOP_RUNS; i++){
 		loop();
 	}
 
-		cout << "\n\n*************Automated tests*************" << endl;
-		if (temperatureConversionTest()){
-			cout << "*temperatureConversionTest* PASSED" << endl;
-		} else {
-			cout << "*temperatureConversionTest* FAILED" << endl;
-		}
+	cout << "\n\n*************Automated tests*************" << endl;
+	if (temperatureConversionTest()){
+		cout << "*temperatureConversionTest* PASSED" << endl;
+	} else {
+		cout << "*temperatureConversionTest* FAILED" << endl;
+	}
 
-		char crc_test[] = {1, 1, 1, 42, 2};
-		char16_t crc = crc16_ccitt(crc_test, 5);
-
-		cout << "CRC Test: " <<  bitset<16>(crc).to_string() << endl;
-		cout << "CRC Test: " <<  hex << crc << endl;
-
-		return 0;
+	return 0;
 }

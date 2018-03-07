@@ -30,7 +30,8 @@ class SerialDispatcher():
 	def dispatch(self):
 		# Read until start sequence occurs
 		while self.ser_con.read(1) != 0xAF:
-
+			pass
+		
 		buffer = []
 		# Version
 		buffer[0] = self.ser_con.read(1)

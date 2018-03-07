@@ -29,12 +29,12 @@ def get_gyro_values():
 	gyro_list = []
 
 	# Accelerator
-	gyro_list.append(read_word_2c(gyro_address_first, 0x3b)
-	gyro_list.append(read_word_2c(gyro_address_first, 0x3d)
-	gyro_list.append(read_word_2c(gyro_address_first, 0x3f)
-	gyro_list.append(read_word_2c(gyro_address_second, 0x3b)
-	gyro_list.append(read_word_2c(gyro_address_second, 0x3d)
-	gyro_list.append(read_word_2c(gyro_address_second, 0x3f)
+	gyro_list.append(read_word_2c(gyro_address_first, 0x3b))
+	gyro_list.append(read_word_2c(gyro_address_first, 0x3d))
+	gyro_list.append(read_word_2c(gyro_address_first, 0x3f))
+	gyro_list.append(read_word_2c(gyro_address_second, 0x3b))
+	gyro_list.append(read_word_2c(gyro_address_second, 0x3d))
+	gyro_list.append(read_word_2c(gyro_address_second, 0x3f))
 
 	# Gyroscope
 	gyro_list.append(read_word_2c(gyro_address_first, 0x43))

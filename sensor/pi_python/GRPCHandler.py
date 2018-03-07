@@ -1,9 +1,9 @@
 import grpc
 import time
-import Queue
+import queue
 
-import chair_pb2
-import chair_pb2_grpc
+import Chair_pb2
+import Chair_pb2_grpc
 
 def buildMessage(self, version, sensor_type, values, timestamp = 0):
 	timestamp = round(time.time())
@@ -18,7 +18,7 @@ class GRPCQueue():
 
 	class __impl:
 		def __init__(self):
-			self.message_queue = Queue.Queue()
+			self.message_queue = queue.Queue()
 
 		def addMessage(self, message):
 			self.message_queue.put(message)

@@ -1,7 +1,5 @@
 import Gyroscope as gy
 
 class HAL():
-	def __init__(self):
-
-	def getGyro():
+	def getGyro(self):
 		return gy.get_gyro_values()

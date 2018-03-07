@@ -21,6 +21,7 @@ class MessageThread(threading.Thread):
 			if type(message) != type(False):
 				handler.sendMessage(message)
 				#print(message)
+#			time.sleep(0.1)
 
 class SerialThread(threading.Thread):
 	def __init__(self, serial):
@@ -44,4 +45,4 @@ class HALThread(threading.Thread):
 		while True:
 			sensor_data = hal_sensors.getGyro()
 			#print("gryo: " + str(sensor_data))
-
+			time.sleep(1)

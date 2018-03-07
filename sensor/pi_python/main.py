@@ -16,8 +16,6 @@ def main():
 		print("Failed to find serial port")
 		return
 
-	#Config.readConfig()
-
 	dispatcher = sd.SerialDispatcher()
 
 	for header in Constants.SerialHeader:

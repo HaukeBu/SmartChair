@@ -54,16 +54,18 @@ class GRPCHandler():
 
 		def initialize(self, server):
 			if not self.is_initialized:
-				print("initialize grpc")
 				self.grpc_channel = grpc.insecure_channel(server)
-				print("grpc channel initialized")
-				self.grpc_service = Chair_pb2_grpc.ChairServiceStub(grpc_channel)
+				self.grpc_service = Chair_pb2_grpc.ChairServiceStub(self.grpc_channel)
 				self.is_initialized = True
 
 		def sendMessage(self, message):
 			if self.is_initialized:
 				print("send grpc message")
-				self.grpc_service.ChairUpdate(message)
+				try:
+					ret = self.grpc_service.ChairUpdate(message)
+					print("grpc message ret = " + str(ret))
+				except:
+					print("grpc send error")
 
 	def __init__(self):
 		if GRPCHandler.__instance is None:

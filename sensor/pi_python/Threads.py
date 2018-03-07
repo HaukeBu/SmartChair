@@ -9,13 +9,13 @@ class MessageThread(threading.Thread):
 		self.daemon = True
 
 	def run(self):
+		print("Start message")
 		queue = grpc_handler.GRPCQueue()
 		#handler = grpc_handler.GRPCHandler()
 
 		#handler.initialize()
 
 		while True:
-			print("Start message")
 			message = queue.getMessage()
 			if type(message) != type(False):
 				#handler.sendMessage(message)

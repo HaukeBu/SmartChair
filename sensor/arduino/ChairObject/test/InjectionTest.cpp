@@ -55,16 +55,16 @@ void delayMicroseconds(int i){
 
 class Serial{
 public:
-	static begin(int baudrate){
+	static void begin(int baudrate){
 		cout << "Initialize serial with baudrate " << baudrate << endl;
 	};
 
-	static write(char c){
+	static void write(char c){
 		string binary = bitset<8>(c).to_string();
 		cout << "Serial char: " << binary << "(" << +c << ")" << endl;
 	};
 
-	static write(char* buf, char len){
+	static void write(char* buf, char len){
 		cout << "Serial bulk:";
 		for(int i = 0; i < len; i++){
 			string binary = bitset<8>(buf[i]).to_string();

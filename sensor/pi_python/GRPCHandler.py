@@ -1,6 +1,6 @@
 import grpc
 import time
-import queue
+import Queue
 
 import Chair_pb2
 import Chair_pb2_grpc

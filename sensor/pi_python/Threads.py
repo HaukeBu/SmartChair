@@ -1,5 +1,6 @@
 import threading
 import GRPCHandler as grpc_handler
+import time
 #import HAL as hal
 
 class MessageThread(threading.Thread):
@@ -19,7 +20,7 @@ class MessageThread(threading.Thread):
 			if type(message) != type(False):
 				#handler.sendMessage(message)
 				print(message)
-				
+
 			time.sleep(10)
 
 class SerialThread(threading.Thread):

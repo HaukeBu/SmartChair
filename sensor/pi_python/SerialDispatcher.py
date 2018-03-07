@@ -24,7 +24,7 @@ class SerialDispatcher():
 		self.ser_con.flushInput()
 
 	def appendCallback(self, idx, cb):
-		self.callback_list[idx] = cb
+		self.callback_list[idx.value] = cb
 
 	def dispatch(self):
 		# Read until start sequence occurs

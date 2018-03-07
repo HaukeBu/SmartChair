@@ -1,7 +1,7 @@
 import threading
 import GRPCHandler as grpc_handler
 import time
-#import HAL as hal
+import HAL as hal
 
 class MessageThread(threading.Thread):
 	def __init__(self):
@@ -33,7 +33,6 @@ class SerialThread(threading.Thread):
 		while True:
 			self.ser_dispatcher.dispatch()
 
-'''
 class HALThread(threading.Thread):
 	def __init__(self):
 		threading.Thread.__init__(self)
@@ -44,4 +43,4 @@ class HALThread(threading.Thread):
 		while True:
 			sensor_data = hal_sensors.getGyro()
 			print("gryo: " + str(sensor_data))
-'''
+

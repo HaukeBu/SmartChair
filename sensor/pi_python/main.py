@@ -7,8 +7,6 @@ import Constants
 import Config
 import time
 import Helper
-import HAL
-
 
 
 def main():

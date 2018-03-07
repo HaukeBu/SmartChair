@@ -42,7 +42,7 @@ class HALThread(threading.Thread):
 
 	def run(self):
 		hal_sensors = hal.HAL()
-		interval = Config.config['GYROSCOPE']['Interval']
+		interval = int(Config.config['GYROSCOPE']['Interval'])
 		if interval > 0:
 			while True:
 				sensor_data = hal_sensors.getGyro()

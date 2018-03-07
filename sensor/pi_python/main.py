@@ -14,7 +14,7 @@ def main():
 		print("Failed to find serial port")
 		return
 
-	dispatcher = sd.SerialDispatcher(port, BAUDRATE)
+	dispatcher = sd.SerialDispatcher()
 
 	# Add callback functions to serial dispatcher
 	dispatcher.appendCallback(Header.DEBUG, cb.debug)
@@ -23,6 +23,7 @@ def main():
 	dispatcher.appendCallback(Header.PRESSURE_SEAT, cb.pressureSeat)
 	dispatcher.appendCallback(Header.TEMPERATURE, cb.temperature)
 
+	dispatcher.initialize(port, BAUDRATE)
 
 	serial_thread = Threads.SerialThread(dispatcher)
 	#hal_thread = Threads.HALThread()

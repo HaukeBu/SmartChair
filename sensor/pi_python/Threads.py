@@ -2,6 +2,7 @@ import threading
 import GRPCHandler as grpc_handler
 import time
 import HAL as hal
+import Constants
 
 class MessageThread(threading.Thread):
 	def __init__(self):
@@ -11,15 +12,15 @@ class MessageThread(threading.Thread):
 	def run(self):
 		print("Start message")
 		queue = grpc_handler.GRPCQueue()
-		#handler = grpc_handler.GRPCHandler()
+		handler = grpc_handler.GRPCHandler()
 
-		#handler.initialize()
+		handler.initialize(Constants.GRPC_SERVER_IP)
 
 		while True:
 			message = queue.getMessage()
 			if type(message) != type(False):
-				#handler.sendMessage(message)
-				print(message)
+				handler.sendMessage(message)
+				#print(message)
 
 class SerialThread(threading.Thread):
 	def __init__(self, serial):
@@ -42,5 +43,5 @@ class HALThread(threading.Thread):
 		hal_sensors = hal.HAL()
 		while True:
 			sensor_data = hal_sensors.getGyro()
-			print("gryo: " + str(sensor_data))
+			#print("gryo: " + str(sensor_data))
 

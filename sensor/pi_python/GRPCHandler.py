@@ -18,7 +18,7 @@ class GRPCQueue():
 
 	class __impl:
 		def __init__(self):
-			self.message_queue = queue.Queue()
+			self.message_queue = Queue.Queue()
 
 		def addMessage(self, message):
 			self.message_queue.put(message)

@@ -1,7 +1,6 @@
 import serial
 import CRC16
 import Constants
-from enum import Enum
 
 VERSION = 1
 
@@ -31,7 +30,7 @@ class SerialDispatcher():
 		# Read until start sequence occurs
 		while self.ser_con.read(1) != 0xAF:
 			pass
-		
+
 		buffer = []
 		# Version
 		buffer[0] = self.ser_con.read(1)

@@ -1,3 +1,5 @@
+from enum import Enum
+
 VERSION = 1
 
 class SerialHeader(Enum):

@@ -1,6 +1,7 @@
 import serial
 import CRC16
 import Constants
+import time
 
 VERSION = 1
 
@@ -23,14 +24,19 @@ class SerialDispatcher():
 		self.ser_con.flushOutput()
 		self.ser_con.flushInput()
 
+		print("Initialized serial dispatcher")
+
 	def appendCallback(self, idx, cb):
 		self.callback_list.insert(idx.value, cb)
+		print("Add new callback function for " + idx.name)
 
 	def dispatch(self):
 		# Read until start sequence occurs
+		print("Wait for serial message")
 		while self.ser_con.read(1) != 0xAF:
-			pass
+			time.sleep(10)
 
+		print("Received start sequence")
 		buffer = []
 		# Version
 		buffer[0] = self.ser_con.read(1)

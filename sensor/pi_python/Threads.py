@@ -14,10 +14,13 @@ class MessageThread(threading.Thread):
 		#handler.initialize()
 
 		while True:
+			print("Start message")
 			message = queue.getMessage()
 			if type(message) != type(False):
 				#handler.sendMessage(message)
 				print(message)
+				
+			time.sleep(10)
 
 class SerialThread(threading.Thread):
 	def __init__(self, serial):
@@ -27,8 +30,10 @@ class SerialThread(threading.Thread):
 		self.ser_dispatcher = serial
 
 	def run(self):
+		print("Start serial thread")
 		while True:
 			self.ser_dispatcher.dispatch()
+			time.sleep(10)
 
 '''
 class HALThread(threading.Thread):

@@ -61,7 +61,7 @@ def pressureSeat(payload):
 		values = values
 	)
 
-	grpc_handler.GRPCQueue().addMessage(message)
+	#grpc_handler.GRPCQueue().addMessage(message)
 
 def temperature(payload):
 	if len(payload) != 1:

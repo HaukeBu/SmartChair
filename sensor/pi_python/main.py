@@ -27,15 +27,15 @@ def main():
 	dispatcher.initialize(port, BAUDRATE)
 
 	serial_thread = Threads.SerialThread(dispatcher)
-	#hal_thread = Threads.HALThread()
+	hal_thread = Threads.HALThread()
 	message_thread = Threads.MessageThread()
 
 	serial_thread.start()
-	#hal_thread.start()
+	hal_thread.start()
 	message_thread.start()
 
 	serial_thread.join()
-	#hal_thread.join()
+	hal_thread.join()
 	message_thread.join()
 
 

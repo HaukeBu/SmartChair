@@ -38,7 +38,7 @@ def distance(payload):
 		values = values
 	)
 
-	#grpc_handler.GRPCQueue().addMessage(message)
+	grpc_handler.GRPCQueue().addMessage(message)
 
 def pressureBack(payload):
 	values = listToJSONString(payload)
@@ -49,7 +49,7 @@ def pressureBack(payload):
 		values = values
 	)
 
-	#grpc_handler.GRPCQueue().addMessage(message)
+	grpc_handler.GRPCQueue().addMessage(message)
 
 
 def pressureSeat(payload):
@@ -61,12 +61,14 @@ def pressureSeat(payload):
 		values = values
 	)
 
-	#grpc_handler.GRPCQueue().addMessage(message)
+	grpc_handler.GRPCQueue().addMessage(message)
 
 def temperature(payload):
 	if len(payload) != 1:
 		print("temperature:: payload too long " + str(len(payload)))
 		return
+
+	payload[0] = payload[0] / 10
 
 	values = listToJSONString(payload)
 
@@ -76,4 +78,4 @@ def temperature(payload):
 		values = values
 	)
 
-	#grpc_handler.GRPCQueue().addMessage(message)
+	grpc_handler.GRPCQueue().addMessage(message)

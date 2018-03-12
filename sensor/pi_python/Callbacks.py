@@ -18,7 +18,7 @@ def debug(payload):
 	values = listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
-		version = Constants.VERSION,
+		version = Constants.GRPC_VERSION,
 		sensor_type = Constants.SerialHeader.DEBUG,
 		values = values
 	)
@@ -33,7 +33,7 @@ def distance(payload):
 	values = listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
-		version = Constants.VERSION,
+		version = Constants.GRPC_VERSION,
 		sensor_type = Constants.SerialHeader.DISTANCE,
 		values = values
 	)
@@ -44,7 +44,7 @@ def pressureBack(payload):
 	values = listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
-		version = Constants.VERSION,
+		version = Constants.GRPC_VERSION,
 		sensor_type = Constants.SerialHeader.PRESSURE_BACK,
 		values = values
 	)
@@ -56,7 +56,7 @@ def pressureSeat(payload):
 	values = listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
-		version = Constants.VERSION,
+		version = Constants.GRPC_VERSION,
 		sensor_type = Constants.SerialHeader.PRESSURE_SEAT,
 		values = values
 	)
@@ -68,12 +68,10 @@ def temperature(payload):
 		print("temperature:: payload too long " + str(len(payload)))
 		return
 
-	payload[0] = payload[0] / 10
-
 	values = listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
-		version = Constants.VERSION,
+		version = Constants.GRPC_VERSION,
 		sensor_type = Constants.SerialHeader.TEMPERATURE,
 		values = values
 	)

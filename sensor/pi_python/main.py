@@ -4,9 +4,9 @@ import SerialDispatcher as sd
 import Callbacks as cb
 import os
 import Constants
+import time
 
-BAUDRATE = 38400
-SERVER_IP = "localhost:50051"
+
 
 def main():
 	port = getSerialPort()
@@ -20,22 +20,26 @@ def main():
 	# Add callback functions to serial dispatcher
 	dispatcher.appendCallback(Constants.SerialHeader.DEBUG, cb.debug, 10)
 	dispatcher.appendCallback(Constants.SerialHeader.DISTANCE, cb.distance, 10)
-	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_BACK, cb.pressureBack, 10)
-	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_SEAT, cb.pressureSeat, 10)
-	dispatcher.appendCallback(Constants.SerialHeader.TEMPERATURE, cb.temperature, 10)
+	#dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_BACK, cb.pressureBack, 10)
+	#dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_SEAT, cb.pressureSeat, 10)
+	#dispatcher.appendCallback(Constants.SerialHeader.TEMPERATURE, cb.temperature, 10)
 
-	dispatcher.initialize(port, BAUDRATE)
+	dispatcher.initialize(port, Constants.SERIAL_BAUDRATE)
 
 	serial_thread = Threads.SerialThread(dispatcher)
-	hal_thread = Threads.HALThread()
+	#hal_thread = Threads.HALThread()
 	message_thread = Threads.MessageThread()
 
 	serial_thread.start()
-	hal_thread.start()
+	#hal_thread.start()
 	message_thread.start()
 
+	while True:
+		dispatcher.sendInitMessage()
+		time.sleep(2)
+
 	serial_thread.join()
-	hal_thread.join()
+	#hal_thread.join()
 	message_thread.join()
 
 

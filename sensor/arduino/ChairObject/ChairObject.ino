@@ -73,16 +73,16 @@ void sendData(Header h, char len, uint16_t* payload){
 	uint16_t crc = crc16_ccitt(buf, len*2+3);
 
 #ifndef TEST_MODE
-	Serial.write(SERIAL_START);
+	Serial.write(SERIAL_SEND_START);
 
 	Serial.write(buf, len*2+3);
 
 	Serial.write((char) (crc & 0xFF));
 	Serial.write((char) (crc >> 8));
 
-	Serial.write(SERIAL_END);
+	Serial.write(SERIAL_SEND_END);
 #else
-	Serial::write(SERIAL_START);
+	Serial::write(SERIAL_SEND_START);
 
 
 	Serial::write(buf, len*2+3);
@@ -90,7 +90,7 @@ void sendData(Header h, char len, uint16_t* payload){
 	Serial::write((char) (crc & 0xFF));
 	Serial::write((char) (crc >> 8));
 
-	Serial::write(SERIAL_END);
+	Serial::write(SERIAL_SEND_END);
 #endif
 }
 
@@ -108,14 +108,8 @@ void sendData(Header h, char len, uint16_t* payload){
 int readData(){
 	char buf[255] = {0};
 	char length = 0;
-
-	// Clear serial input buffer until start bit is read
-	while (Serial.read() != SERIAL_READ_START){
-		// Return if buffer is empty
-		if (Serial.available() == 0){
-			return CONFIG_NO_START_SYMBOL;
-		}
-	}
+	int i = 0;
+	int j = 0;
 
 	// Check version
 	if ((buf[0] = Serial.read()) != VERSION){
@@ -127,7 +121,7 @@ int readData(){
 
 	// Read payload
 	length = 2;
-	for (int i = 1, int j = 0; i <= buf[1]; i++, j+=3){
+	for (i = 1, j = 0; i <= buf[1]; i++, j+=3){
 		buf[(i * j)    ] = Serial.read();
 		buf[(i * j) + 1] = Serial.read();
 		buf[(i * j) + 2] = Serial.read();
@@ -142,7 +136,7 @@ int readData(){
 	}
 
 	// Check crc
-	uint16_t crc = (crc2 << 8) | crc1
+	uint16_t crc = (crc2 << 8) | crc1;
 	uint16_t crc_recv = crc16_ccitt(buf, length);
 	if (crc_recv != crc){
 		return CONFIG_CRC_ERROR;
@@ -150,7 +144,7 @@ int readData(){
 
 
 	// Assign received intervals
-	for (int i = 0, int j = 3; i < buf[1]; i++, j+=3){
+	for (i = 0, j = 3; i < buf[1]; i++, j+=3){
 		intervals[buf[j]] = (buf[j + 2] << 8) | buf[j + 1];
 	}
 
@@ -307,8 +301,8 @@ void setNextMeasure(Header h){
  */
 void setup(){
 #ifdef TEST_MODE
-		cout << "\n****In setup()" << endl;
-		Serial::begin(SERIAL_BAUDRATE);
+	cout << "\n****In setup()" << endl;
+	Serial::begin(SERIAL_BAUDRATE);
 #else
 	Serial.begin(SERIAL_BAUDRATE);
 #endif
@@ -341,12 +335,13 @@ void loop(){
 	uint16_t temperature = 0;
 	uint16_t distance = 0;
 
-	if (Serial.available() > 0){
+	if (Serial.available() && Serial.read() == SERIAL_READ_START){
 		// Return with debug message if assignment was ok
 		uint16_t ret = (uint16_t) readData();
 		sendData(DEBUG, 1, &ret);
 	}
 
+/*
 	if (canMeasure(DISTANCE)){
 		getDistance(&distance);
 		sendData(DISTANCE, 1, &distance);
@@ -370,4 +365,5 @@ void loop(){
 		sendData(TEMPERATURE, 1, &temperature);
 		setNextMeasure(TEMPERATURE);
 	}
+ */
 }

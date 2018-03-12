@@ -18,8 +18,11 @@
 #define BACK_PRESSURE_SENSORS	6
 #define SEAT_PRESSURE_SENSORS	4
 
-#define SERIAL_START			0xAF
-#define SERIAL_END				0xFE
+#define SERIAL_SEND_START		0xAF
+#define SERIAL_SEND_END			0xFE
+
+#define SERIAL_READ_START		0xDE
+#define SERIAL_READ_END			0xED
 
 #define CRC16MASK				0x8005
 
@@ -28,8 +31,21 @@ enum Header{
 	DISTANCE,
 	PRESSURE_BACK,
 	PRESSURE_SEAT,
-	TEMPERATURE
+	TEMPERATURE,
+	HEADER_END
 };
+
+enum DebugMessages{
+	CONFIG_OK = 1,
+	CONFIG_NO_START_SYMBOL,
+	CONFIG_NO_END_SYMBOL,
+	CONFIG_WRONG_VERSION,
+	CONFIG_CRC_ERROR
+};
+
+uint16_t intervals[HEADER_END] = {0};
+unsigned long next_measurement[HEADER_END] = {0};
+
 
 /**
  * Send data over serial interface
@@ -50,7 +66,7 @@ void sendData(Header h, char len, uint16_t* payload){
 	for (i = 0, j = 0; i < len; i++, j = j + 2){
 		uint16_t temp = payload[i];
 
-		buf[3 + j		] = (uint8_t) (temp & 0xFF);
+		buf[3 + j    ] = (uint8_t) (temp & 0xFF);
 		buf[3 + j + 1] = (uint8_t) (temp >> 8);
 	}
 
@@ -76,8 +92,71 @@ void sendData(Header h, char len, uint16_t* payload){
 
 	Serial::write(SERIAL_END);
 #endif
-
 }
+
+/**
+ * Read data over serial interface
+ * Protocol:
+ *		8			8		   8	 n * {8		 16}		16		 8
+ *	|--0xDE--|--Version--|--Length--|--{Type--Interval}--|--CRC--|--0xED--|
+ *
+ * Receives the interval in which data has to be aquired and sent
+ * Length indicates the amount of (type, interval) tuples
+ * Fields with a length of over 8 bits were sent LSB first
+ */
+#ifndef TEST_MODE
+int readData(){
+	char buf[255] = {0};
+	char length = 0;
+
+	// Clear serial input buffer until start bit is read
+	while (Serial.read() != SERIAL_READ_START){
+		// Return if buffer is empty
+		if (Serial.available() == 0){
+			return CONFIG_NO_START_SYMBOL;
+		}
+	}
+
+	// Check version
+	if ((buf[0] = Serial.read()) != VERSION){
+		return CONFIG_WRONG_VERSION;
+	}
+
+	// Read length
+	buf[1] = Serial.read();
+
+	// Read payload
+	length = 2;
+	for (int i = 1, int j = 0; i <= buf[1]; i++, j+=3){
+		buf[(i * j)    ] = Serial.read();
+		buf[(i * j) + 1] = Serial.read();
+		buf[(i * j) + 2] = Serial.read();
+		length = length + 3;
+	}
+
+	char crc1 = Serial.read();
+	char crc2 = Serial.read();
+
+	if (Serial.read() != SERIAL_READ_END){
+		return CONFIG_NO_END_SYMBOL;
+	}
+
+	// Check crc
+	uint16_t crc = (crc2 << 8) | crc1
+	uint16_t crc_recv = crc16_ccitt(buf, length);
+	if (crc_recv != crc){
+		return CONFIG_CRC_ERROR;
+	}
+
+
+	// Assign received intervals
+	for (int i = 0, int j = 3; i < buf[1]; i++, j+=3){
+		intervals[buf[j]] = (buf[j + 2] << 8) | buf[j + 1];
+	}
+
+	return CONFIG_OK;
+}
+#endif
 
 /***********************************************************
  * Temperature Sensor
@@ -210,6 +289,17 @@ void getDistance(uint16_t* distance_out){
 #endif
 }
 
+/***********************************************************
+ * Helper Functions
+ ***********************************************************/
+
+bool canMeasure(Header h){
+	return intervals[h] > 0 && next_measurement[h] <= millis();
+}
+
+void setNextMeasure(Header h){
+	next_measurement[h] = millis() + intervals[h];
+}
 
 /*
  * Arduino Setup
@@ -251,29 +341,33 @@ void loop(){
 	uint16_t temperature = 0;
 	uint16_t distance = 0;
 
-	getDistance(&distance);
-	getPressure(pressure_values_back, pressure_values_seat, BACK_PRESSURE_SENSORS, SEAT_PRESSURE_SENSORS);
-	getTemperature(&temperature);
+	if (Serial.available() > 0){
+		// Return with debug message if assignment was ok
+		uint16_t ret = (uint16_t) readData();
+		sendData(DEBUG, 1, &ret);
+	}
 
-#ifdef TEST_MODE
-	cout << "\n****Send Distance" << endl;
-#endif
-	sendData(DISTANCE, 1, &distance);
+	if (canMeasure(DISTANCE)){
+		getDistance(&distance);
+		sendData(DISTANCE, 1, &distance);
+		setNextMeasure(DISTANCE);
+	}
 
-#ifdef TEST_MODE
-	cout << "\n****Send Back Pressure" << endl;
-#endif
-	sendData(PRESSURE_BACK, BACK_PRESSURE_SENSORS, pressure_values_back);
+	if (canMeasure(PRESSURE_BACK)) {
+		getPressure(pressure_values_back, pressure_values_seat, BACK_PRESSURE_SENSORS, SEAT_PRESSURE_SENSORS);
+		sendData(PRESSURE_BACK, BACK_PRESSURE_SENSORS, pressure_values_back);
+		setNextMeasure(PRESSURE_BACK);
+	}
 
-#ifdef TEST_MODE
-	cout << "\n****Send Seat Pressure" << endl;
-#endif
-	sendData(PRESSURE_SEAT, SEAT_PRESSURE_SENSORS, pressure_values_seat);
+	if (canMeasure(PRESSURE_SEAT)){
+		getPressure(pressure_values_back, pressure_values_seat, BACK_PRESSURE_SENSORS, SEAT_PRESSURE_SENSORS);
+		sendData(PRESSURE_SEAT, SEAT_PRESSURE_SENSORS, pressure_values_seat);
+		setNextMeasure(PRESSURE_SEAT);
+	}
 
-#ifdef TEST_MODE
-	cout << "\n****Send Temperature" << endl;
-#endif
-	sendData(TEMPERATURE, 1, &temperature);
-
- delay(40);
+	if (canMeasure(TEMPERATURE)){
+		getTemperature(&temperature);
+		sendData(TEMPERATURE, 1, &temperature);
+		setNextMeasure(TEMPERATURE);
+	}
 }

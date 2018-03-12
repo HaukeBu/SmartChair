@@ -18,11 +18,11 @@ def main():
 	dispatcher = sd.SerialDispatcher()
 
 	# Add callback functions to serial dispatcher
-	dispatcher.appendCallback(Constants.SerialHeader.DEBUG, cb.debug)
-	dispatcher.appendCallback(Constants.SerialHeader.DISTANCE, cb.distance)
-	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_BACK, cb.pressureBack)
-	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_SEAT, cb.pressureSeat)
-	dispatcher.appendCallback(Constants.SerialHeader.TEMPERATURE, cb.temperature)
+	dispatcher.appendCallback(Constants.SerialHeader.DEBUG, cb.debug, 10)
+	dispatcher.appendCallback(Constants.SerialHeader.DISTANCE, cb.distance, 10)
+	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_BACK, cb.pressureBack, 10)
+	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_SEAT, cb.pressureSeat, 10)
+	dispatcher.appendCallback(Constants.SerialHeader.TEMPERATURE, cb.temperature, 10)
 
 	dispatcher.initialize(port, BAUDRATE)
 

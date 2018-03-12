@@ -82,13 +82,13 @@ bool temperatureConversionTest(){
 	bool ret = true;
 
 	uint16_t temperature = digitalTemperatureToCelsius(0x000);
-	if (temperature != (uint16_t) -50){
-		cout << "*temperatureConversionTest* Input: 0x000, Expected Output: -50, Got: " << temperature << endl;
+	if (temperature != (uint16_t) -500){
+		cout << "*temperatureConversionTest* Input: 0x000, Expected Output: -50, Got: " << (int16_t) temperature << endl;
 		ret = false;
 	}
 
 	temperature = digitalTemperatureToCelsius(0x7FF);
-	if (temperature != 150){
+	if (temperature != 1500){
 		cout << "*temperatureConversionTest* Input: 0x7FF, Expected Output: 150, Got: " << temperature << endl;
 		ret = false;
 	}
@@ -100,7 +100,7 @@ bool temperatureConversionTest(){
 	}
 
 	temperature = digitalTemperatureToCelsius(0x2FF);
-	if (temperature != 24){
+	if (temperature != 249){
 		cout << "*temperatureConversionTest* Input: 0x2FF, Expected Output: 24, Got: " << temperature << endl;
 		ret = false;
 	}

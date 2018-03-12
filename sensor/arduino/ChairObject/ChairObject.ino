@@ -36,7 +36,7 @@ enum Header{
  * Protocol:
  *		8			8		 8			8		n * 16		16		 8
  *	|--0xAF--|--Version--|--Type--|--Length--|--Payload--|--CRC--|--0xFE--|
- *	
+ *
  * Fields with a length of over 8 bits send their data LSB first
  */
 void sendData(Header h, char len, uint16_t* payload){
@@ -46,16 +46,16 @@ void sendData(Header h, char len, uint16_t* payload){
 
 	buf[0] = VERSION;
 	buf[1] = (char) h;
-	buf[2] = len;
+	buf[2] = len*2;
 	for (i = 0, j = 0; i < len; i++, j = j + 2){
 		uint16_t temp = payload[i];
-		
-		buf[3 + j    ] = (uint8_t) (temp & 0xFF);		
-		buf[3 + j + 1] = (uint8_t) (temp >> 8);	
+
+		buf[3 + j		] = (uint8_t) (temp & 0xFF);
+		buf[3 + j + 1] = (uint8_t) (temp >> 8);
 	}
 
 	uint16_t crc = crc16_ccitt(buf, len*2+3);
-	
+
 #ifndef TEST_MODE
 	Serial.write(SERIAL_START);
 
@@ -65,10 +65,10 @@ void sendData(Header h, char len, uint16_t* payload){
 	Serial.write((char) (crc >> 8));
 
 	Serial.write(SERIAL_END);
-#else 
+#else
 	Serial::write(SERIAL_START);
 
-	
+
 	Serial::write(buf, len*2+3);
 
 	Serial::write((char) (crc & 0xFF));
@@ -76,7 +76,7 @@ void sendData(Header h, char len, uint16_t* payload){
 
 	Serial::write(SERIAL_END);
 #endif
-	   
+
 }
 
 /***********************************************************
@@ -90,7 +90,7 @@ uint8_t readByte(int pin){
 	// start sequence
 	while(digitalRead(pin));
 	while(!digitalRead(pin));
-			
+
 	// read 8 bits and a parity bit
 	for(int i = 0; i < 9; ++i) {
 
@@ -112,17 +112,19 @@ uint16_t readTemperature(int pin){
 	uint8_t b1 = readByte(pin);
 	uint8_t b2 = readByte(pin);
 	uint16_t ret = (b1 << 8) | b2;
-		
+
 	return ret;
 }
 
 uint16_t digitalTemperatureToCelsius(int16_t temperature_in){
 	int16_t temperature_out = 0.0f;
 	float temp = (float) temperature_in;
-		
+
 	// as seen in data sheet of "Temperature TSIC306"
 	temp = (temp / 2047.0f * 200.0f) - 50.0f;
-	temperature_out = (int16_t) temp;
+
+	// convert the temperature with one decimal place to 16 bit int
+	temperature_out = (uint16_t) (temp * 10);
 
 	return temperature_out;
 }
@@ -135,19 +137,19 @@ void getTemperature(uint16_t* temp_out){
 	uint16_t temperature = 0;
 
 	// activate sensor
-	digitalWrite(TEMPERATURE_POWER_PIN, HIGH);	
+	digitalWrite(TEMPERATURE_POWER_PIN, HIGH);
 
 	// wait for measurement
-	delayMicroseconds(60);	
+	delayMicroseconds(60);
 
 	// get data from sensor
-	temperature = readTemperature(TEMPERATURE_DATA_PIN); 
+	temperature = readTemperature(TEMPERATURE_DATA_PIN);
 
 	// deactivate sensor
-	digitalWrite(TEMPERATURE_POWER_PIN, LOW);	
+	digitalWrite(TEMPERATURE_POWER_PIN, LOW);
 
 	*temp_out = digitalTemperatureToCelsius(temperature);
-	
+
 #ifdef TEST_MODE
 	cout << "****Leaving getTemperature()\n" << endl;
 #endif
@@ -180,7 +182,7 @@ void getPressure(uint16_t* pressure_values_back, uint16_t* pressure_values_seat,
 			pressure_values_back[i] = analogRead(PRESSURE_BACK_PIN);
 		}
 
-		if (i < seat_len){			
+		if (i < seat_len){
 			pressure_values_seat[i] = analogRead(PRESSURE_SEAT_PIN);
 		}
 	}
@@ -189,24 +191,20 @@ void getPressure(uint16_t* pressure_values_back, uint16_t* pressure_values_seat,
 	digitalWrite(PRESSURE_S0_PIN, LOW);
 	digitalWrite(PRESSURE_S1_PIN, LOW);
 	digitalWrite(PRESSURE_S2_PIN, LOW);
-	
+
 #ifdef TEST_MODE
 	cout << "****Leaving getPressure()\n" << endl;
 #endif
 }
-
-
-/***********************************************************
- * Distance Sensor
- ***********************************************************/
 
 void getDistance(uint16_t* distance_out){
 #ifdef TEST_MODE
 	cout << "\n****In getDistance()" << endl;
 #endif
 
+
 	*distance_out = (uint16_t) analogRead(DISTANCE_PIN);
-	
+
 #ifdef TEST_MODE
 	cout << "****Leaving getDistance()\n" << endl;
 #endif
@@ -224,10 +222,10 @@ void setup(){
 #else
 	Serial.begin(SERIAL_BAUDRATE);
 #endif
-	
+
 	pinMode(PRESSURE_S0_PIN, OUTPUT);
 	pinMode(PRESSURE_S1_PIN, OUTPUT);
-	pinMode(PRESSURE_S2_PIN, OUTPUT); 
+	pinMode(PRESSURE_S2_PIN, OUTPUT);
 
 	digitalWrite(PRESSURE_S0_PIN, LOW);
 	digitalWrite(PRESSURE_S1_PIN, LOW);
@@ -235,10 +233,10 @@ void setup(){
 
 	pinMode(TEMPERATURE_POWER_PIN, OUTPUT);
 	digitalWrite(TEMPERATURE_POWER_PIN, LOW);
-	
+
 	pinMode(TEMPERATURE_DATA_PIN, INPUT);
-		
-#ifdef TEST_MODE		
+
+#ifdef TEST_MODE
 		cout << "****Leaving setup()\n" << endl;
 #endif
 }
@@ -256,24 +254,26 @@ void loop(){
 	getDistance(&distance);
 	getPressure(pressure_values_back, pressure_values_seat, BACK_PRESSURE_SENSORS, SEAT_PRESSURE_SENSORS);
 	getTemperature(&temperature);
-	
+
 #ifdef TEST_MODE
 	cout << "\n****Send Distance" << endl;
-#endif		
+#endif
 	sendData(DISTANCE, 1, &distance);
-		
+
 #ifdef TEST_MODE
 	cout << "\n****Send Back Pressure" << endl;
-#endif 
+#endif
 	sendData(PRESSURE_BACK, BACK_PRESSURE_SENSORS, pressure_values_back);
-		
+
 #ifdef TEST_MODE
 	cout << "\n****Send Seat Pressure" << endl;
-#endif		 
+#endif
 	sendData(PRESSURE_SEAT, SEAT_PRESSURE_SENSORS, pressure_values_seat);
-		
+
 #ifdef TEST_MODE
 	cout << "\n****Send Temperature" << endl;
-#endif		
+#endif
 	sendData(TEMPERATURE, 1, &temperature);
+
+ delay(40);
 }

@@ -5,11 +5,11 @@ import Queue
 import Chair_pb2
 import Chair_pb2_grpc
 
-def buildMessage(self, version, sensor_type, values, timestamp = 0):
-	timestamp = round(time.time())
+def buildMessage(version, sensor_type, values, timestamp = 0):
+	timestamp = int(time.time())
 
-	ret_msg = chair_pb2.Chair(version = version, timestamp = timestamp
-							, sensor_type = sensor_type, values = values)
+	ret_msg = Chair_pb2.Chair(version = version, timestamp = timestamp
+							, sensor_type = sensor_type.value, values = values)
 
 	return ret_msg
 
@@ -53,7 +53,7 @@ class GRPCHandler():
 		def initialize(self, server):
 			if not self.is_initialized:
 				self.grpc_channel = grpc.insecure_channel(server)
-				self.grpc_service = chair_pb2_grpc.ChairServiceStub(grpc_channel)
+				self.grpc_service = Chair_pb2_grpc.ChairServiceStub(grpc_channel)
 				self.is_initialized = True
 
 		def sendMessage(self, message):

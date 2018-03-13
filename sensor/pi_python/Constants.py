@@ -1,16 +1,28 @@
 from enum import Enum
+import Config
+import Helper
 
-GRPC_VERSION = 1
-GRPC_SERVER_IP = "localhost:50051"
+for entry in Config.config['SERIAL']:
+	name = "SERIAL_" + Helper.camelcaseToUppercase(entry)
+	val = Config.config['SERIAL'][entry]
+	try:
+		if "0x" in val:
+			exec("%s = %d" % (name, int(val, 16)))
+		else:
+			exec("%s = %d" % (name, int(val)))
+	except:
+		exec("%s = '%s'" % (name, val))
 
-SERIAL_VERSION = 1
-SERIAL_BAUDRATE = 38400
-
-SERIAL_READ_START = 0xAF
-SERIAL_READ_END = 0xFE
-
-SERIAL_SEND_START = 0xDE
-SERIAL_SEND_END = 0xED
+for entry in Config.config['GRPC']:
+	name = "GRPC_" + Helper.camelcaseToUppercase(entry)
+	val = Config.config['GRPC'][entry]
+	try:
+		if "0x" in val:
+			exec("%s = %d" % (name, int(val, 16)))
+		else:
+			exec("%s = %d" % (name, int(val)))
+	except:
+		exec("%s = '%s'" % (name, val))
 
 class SerialHeader(Enum):
 	DEBUG = 0

@@ -66,7 +66,7 @@ class SerialDispatcher():
 		else:
 			self.callback_list[idx.value] = cb
 			self.interval_list[idx.value] = interval
-			print("Add new callback function for " + idx.name)
+			print("Add new callback function for " + idx.name + ", Interval = " + str(interval))
 			return True
 
 	def __readByte(self):

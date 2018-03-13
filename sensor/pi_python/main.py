@@ -4,7 +4,9 @@ import SerialDispatcher as sd
 import Callbacks as cb
 import os
 import Constants
+import Config
 import time
+import Helper
 
 
 
@@ -15,14 +17,16 @@ def main():
 		print("Failed to find serial port")
 		return
 
+	#Config.readConfig()
+
 	dispatcher = sd.SerialDispatcher()
 
-	# Add callback functions to serial dispatcher
-	dispatcher.appendCallback(Constants.SerialHeader.DEBUG, cb.debug, 10)
-	dispatcher.appendCallback(Constants.SerialHeader.DISTANCE, cb.distance, 100)
-	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_BACK, cb.pressureBack, 200)
-	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_SEAT, cb.pressureSeat, 1000)
-	dispatcher.appendCallback(Constants.SerialHeader.TEMPERATURE, cb.temperature, 500)
+	for header in Constants.SerialHeader:
+		if header.name in Config.config:
+			interval = int(Config.config[header.name]['Interval'])
+			if interval > 1:
+				function = getattr(cb, Helper.uppercaseToCamelcase(header.name))
+				dispatcher.appendCallback(header, function, interval)
 
 	dispatcher.initialize(port, Constants.SERIAL_BAUDRATE)
 

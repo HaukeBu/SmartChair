@@ -12,4 +12,4 @@ def camelcaseToUppercase(name):
 
 
 if __name__ == "__main__":
-	print(camelcaseToUppercase("ReadStart"))
+	print(camelcaseToUppercase("ServerIP"))

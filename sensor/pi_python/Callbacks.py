@@ -1,21 +1,9 @@
 import Constants
 import GRPCHandler as grpc_handler
-
-def listToJSONString(lst):
-	ret_str = '"values": ['
-
-	for idx in range(len(lst)):
-		ret_str += '{"id": ' + str(idx) + ', "value": ' + str(lst[idx]) + '}'
-
-		if idx < len(lst) - 1:
-			ret_str += ', '
-
-	ret_str += ']'
-
-	return ret_str
+import Helper
 
 def debug(payload):
-	values = listToJSONString(payload)
+	values = Helper.listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
@@ -31,7 +19,7 @@ def distance(payload):
 		print("distance:: payload too long " + str(len(payload)))
 		return
 
-	values = listToJSONString(payload)
+	values = Helper.listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
@@ -42,7 +30,7 @@ def distance(payload):
 	grpc_handler.GRPCQueue().addMessage(message)
 
 def pressureBack(payload):
-	values = listToJSONString(payload)
+	values = Helper.listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
@@ -54,7 +42,7 @@ def pressureBack(payload):
 
 
 def pressureSeat(payload):
-	values = listToJSONString(payload)
+	values = Helper.listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
@@ -69,7 +57,7 @@ def temperature(payload):
 		print("temperature:: payload too long " + str(len(payload)))
 		return
 
-	values = listToJSONString(payload)
+	values = Helper.listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
@@ -77,4 +65,15 @@ def temperature(payload):
 		values = values
 	)
 
+	grpc_handler.GRPCQueue().addMessage(message)
+
+def gyroscope(payload):
+	values = Helper.listToJSONString(payload)
+
+	message = grpc_handler.buildMessage(
+		version = Constants.GRPC_VERSION,
+		sensor_type = Constants.GRPCHeader.GYROSCOPE,
+		values = values
+	)
+	
 	grpc_handler.GRPCQueue().addMessage(message)

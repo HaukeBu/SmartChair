@@ -3,6 +3,8 @@ import GRPCHandler as grpc_handler
 import time
 import HAL as hal
 import Constants
+import Config
+import Callbacks
 
 class MessageThread(threading.Thread):
 	def __init__(self):
@@ -20,8 +22,6 @@ class MessageThread(threading.Thread):
 			message = queue.getMessage()
 			if type(message) != type(False):
 				handler.sendMessage(message)
-				#print(message)
-#			time.sleep(0.1)
 
 class SerialThread(threading.Thread):
 	def __init__(self, serial):
@@ -42,7 +42,10 @@ class HALThread(threading.Thread):
 
 	def run(self):
 		hal_sensors = hal.HAL()
-		while True:
-			sensor_data = hal_sensors.getGyro()
-			#print("gryo: " + str(sensor_data))
-			time.sleep(1)
+		interval = Config.config['GYROSCOPE']['Interval']
+		if interval > 0:
+			while True:
+				sensor_data = hal_sensors.getGyro()
+
+				Callbacks.gyroscope(sensor_data)
+				time.sleep(interval / 1000)

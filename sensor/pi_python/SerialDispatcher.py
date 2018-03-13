@@ -25,13 +25,15 @@ class SerialDispatcher():
 		self.ser_con.flushOutput()
 		self.ser_con.flushInput()
 
-		#self.__sendInitMessage()
+		time.sleep(2)
+
+		self.__sendInitMessage()
 
 		self.initialized = True
 
 		print("Initialized serial dispatcher")
 
-	def sendInitMessage(self):
+	def __sendInitMessage(self):
 		crc_list = []
 		crc_list.append(Constants.SERIAL_VERSION)
 
@@ -49,12 +51,13 @@ class SerialDispatcher():
 
 		crc = CRC16.crc16_ccitt(crc_list, len(crc_list))
 
-		self.ser_con.write(Constants.SERIAL_SEND_START)
+		self.ser_con.write(chr(Constants.SERIAL_SEND_START))
 		for val in crc_list:
-			self.ser_con.write(val)
-		self.ser_con.write(crc & 0xFF)
-		self.ser_con.write(crc >> 8)
-		self.ser_con.write(Constants.SERIAL_SEND_END)
+			self.ser_con.write(chr(val))
+		self.ser_con.write(chr(crc & 0xFF))
+		self.ser_con.write(chr(crc >> 8))
+		self.ser_con.write(chr(Constants.SERIAL_SEND_END))
+
 
 	def appendCallback(self, idx, cb, interval):
 		if self.initialized:

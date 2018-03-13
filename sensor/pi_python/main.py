@@ -19,10 +19,10 @@ def main():
 
 	# Add callback functions to serial dispatcher
 	dispatcher.appendCallback(Constants.SerialHeader.DEBUG, cb.debug, 10)
-	dispatcher.appendCallback(Constants.SerialHeader.DISTANCE, cb.distance, 10)
-	#dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_BACK, cb.pressureBack, 10)
-	#dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_SEAT, cb.pressureSeat, 10)
-	#dispatcher.appendCallback(Constants.SerialHeader.TEMPERATURE, cb.temperature, 10)
+	dispatcher.appendCallback(Constants.SerialHeader.DISTANCE, cb.distance, 100)
+	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_BACK, cb.pressureBack, 200)
+	dispatcher.appendCallback(Constants.SerialHeader.PRESSURE_SEAT, cb.pressureSeat, 1000)
+	dispatcher.appendCallback(Constants.SerialHeader.TEMPERATURE, cb.temperature, 500)
 
 	dispatcher.initialize(port, Constants.SERIAL_BAUDRATE)
 
@@ -33,10 +33,6 @@ def main():
 	serial_thread.start()
 	#hal_thread.start()
 	message_thread.start()
-
-	while True:
-		dispatcher.sendInitMessage()
-		time.sleep(2)
 
 	serial_thread.join()
 	#hal_thread.join()

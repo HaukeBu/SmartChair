@@ -112,25 +112,33 @@ int readData(){
 	int j = 0;
 
 	// Check version
-	if ((buf[0] = Serial.read()) != VERSION){
+  while(!Serial.available()){}
+	if ((buf[0] = (char) Serial.read()) != VERSION){
 		return CONFIG_WRONG_VERSION;
 	}
 
 	// Read length
+  while(!Serial.available()){}
 	buf[1] = Serial.read();
 
 	// Read payload
 	length = 2;
-	for (i = 1, j = 0; i <= buf[1]; i++, j+=3){
-		buf[(i * j)    ] = Serial.read();
-		buf[(i * j) + 1] = Serial.read();
-		buf[(i * j) + 2] = Serial.read();
+	for (i = 0, j = 0; i < buf[1]; i++, j = j + 3){
+    while(!Serial.available()){}
+		buf[2 + j    ] = Serial.read();
+   while(!Serial.available()){}
+		buf[2 + j + 1] = Serial.read();
+   while(!Serial.available()){}
+		buf[2 + j + 2] = Serial.read();
 		length = length + 3;
 	}
 
-	char crc1 = Serial.read();
-	char crc2 = Serial.read();
+while(!Serial.available()){}
+	unsigned char crc1 = Serial.read();
+  while(!Serial.available()){}
+	unsigned char crc2 = Serial.read();
 
+while(!Serial.available()){}
 	if (Serial.read() != SERIAL_READ_END){
 		return CONFIG_NO_END_SYMBOL;
 	}
@@ -144,8 +152,8 @@ int readData(){
 
 
 	// Assign received intervals
-	for (i = 0, j = 3; i < buf[1]; i++, j+=3){
-		intervals[buf[j]] = (buf[j + 2] << 8) | buf[j + 1];
+	for (i = 0, j = 2; i < buf[1]; i++, j+=3){
+		intervals[buf[j]] = (buf[j + 2] << 8) | (buf[j + 1] & 0xFF);
 	}
 
 	return CONFIG_OK;
@@ -305,6 +313,7 @@ void setup(){
 	Serial::begin(SERIAL_BAUDRATE);
 #else
 	Serial.begin(SERIAL_BAUDRATE);
+  while(!Serial);
 #endif
 
 	pinMode(PRESSURE_S0_PIN, OUTPUT);
@@ -336,12 +345,11 @@ void loop(){
 	uint16_t distance = 0;
 
 	if (Serial.available() && Serial.read() == SERIAL_READ_START){
-		// Return with debug message if assignment was ok
+		// Return with debug message
 		uint16_t ret = (uint16_t) readData();
 		sendData(DEBUG, 1, &ret);
 	}
 
-/*
 	if (canMeasure(DISTANCE)){
 		getDistance(&distance);
 		sendData(DISTANCE, 1, &distance);
@@ -365,5 +373,4 @@ void loop(){
 		sendData(TEMPERATURE, 1, &temperature);
 		setNextMeasure(TEMPERATURE);
 	}
- */
 }

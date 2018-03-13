@@ -7,7 +7,7 @@ def debug(payload):
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
-		sensor_type = Constants.SerialHeader.DEBUG,
+		sensor_type = Constants.GRPCHeader.DEBUG,
 		values = values
 	)
 
@@ -23,7 +23,7 @@ def distance(payload):
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
-		sensor_type = Constants.SerialHeader.DISTANCE,
+		sensor_type = Constants.GRPCHeader.DISTANCE,
 		values = values
 	)
 
@@ -34,7 +34,7 @@ def pressureBack(payload):
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
-		sensor_type = Constants.SerialHeader.PRESSURE_BACK,
+		sensor_type = Constants.GRPCHeader.PRESSURE_BACK,
 		values = values
 	)
 
@@ -46,7 +46,7 @@ def pressureSeat(payload):
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
-		sensor_type = Constants.SerialHeader.PRESSURE_SEAT,
+		sensor_type = Constants.GRPCHeader.PRESSURE_SEAT,
 		values = values
 	)
 
@@ -61,7 +61,7 @@ def temperature(payload):
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
-		sensor_type = Constants.SerialHeader.TEMPERATURE,
+		sensor_type = Constants.GRPCHeader.TEMPERATURE,
 		values = values
 	)
 
@@ -75,5 +75,5 @@ def gyroscope(payload):
 		sensor_type = Constants.GRPCHeader.GYROSCOPE,
 		values = values
 	)
-	
+
 	grpc_handler.GRPCQueue().addMessage(message)

@@ -1,12 +1,13 @@
 syntax = "proto3";
 
 /*
-class SerialHeader(Enum):
+class GRPCHeader(Enum):
 	DEBUG = 0
 	DISTANCE = 1
 	PRESSURE_BACK = 2
 	PRESSURE_SEAT = 3
 	TEMPERATURE = 4
+	GYROSCOPE = 5
 */
 
 service ChairService{

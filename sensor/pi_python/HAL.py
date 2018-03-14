@@ -29,14 +29,14 @@ class HAL():
 			gyro_list = []
 
 			# Accelerator
-			gyro_list.append(__readWord2c(GYRO_BACK_ADDRESS, 0x3b))
-			gyro_list.append(__readWord2c(GYRO_BACK_ADDRESS, 0x3d))
-			gyro_list.append(__readWord2c(GYRO_BACK_ADDRESS, 0x3f))
+			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x3b))
+			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x3d))
+			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x3f))
 
 			# Gyroscope
-			gyro_list.append(__readWord2c(GYRO_BACK_ADDRESS, 0x43))
-			gyro_list.append(__readWord2c(GYRO_BACK_ADDRESS, 0x45))
-			gyro_list.append(__readWord2c(GYRO_BACK_ADDRESS, 0x47))
+			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x43))
+			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x45))
+			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x47))
 
 			return gyro_list
 
@@ -44,14 +44,14 @@ class HAL():
 			gyro_list = []
 
 			# Accelerator
-			gyro_list.append(__readWord2c(GYRO_SEAT_ADDRESS, 0x3b))
-			gyro_list.append(__readWord2c(GYRO_SEAT_ADDRESS, 0x3d))
-			gyro_list.append(__readWord2c(GYRO_SEAT_ADDRESS, 0x3f))
+			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3b))
+			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3d))
+			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3f))
 
 			# Gyroscope
-			gyro_list.append(__readWord2c(GYRO_SEAT_ADDRESS, 0x43))
-			gyro_list.append(__readWord2c(GYRO_SEAT_ADDRESS, 0x45))
-			gyro_list.append(__readWord2c(GYRO_SEAT_ADDRESS, 0x47))
+			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x43))
+			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x45))
+			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x47))
 
 			return gyro_list
 

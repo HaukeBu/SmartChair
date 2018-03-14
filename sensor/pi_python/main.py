@@ -25,11 +25,11 @@ def main():
 				function = getattr(cb, Helper.uppercaseToCamelcase(header.name))
 				dispatcher.appendCallback(header, function, interval)
 
-	dispatcher.initialize(port, Constants.SERIAL_BAUDRATE)
-
-	serial_thread = Threads.SerialThread(dispatcher)
 	hal_thread = Threads.HALThread()
 	message_thread = Threads.MessageThread()
+
+	dispatcher.initialize(port, Constants.SERIAL_BAUDRATE)
+	serial_thread = Threads.SerialThread(dispatcher)
 
 	serial_thread.start()
 	hal_thread.start()

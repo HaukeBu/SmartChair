@@ -14,7 +14,6 @@ def debug(payload):
 	grpc_handler.GRPCQueue().addMessage(message)
 
 def distance(payload):
-	print("in distance")
 	if len(payload) != 1:
 		print("distance:: payload too long " + str(len(payload)))
 		return

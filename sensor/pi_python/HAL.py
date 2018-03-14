@@ -48,7 +48,7 @@ class HAL():
 			# Rotation
 			rot_x = math.degrees(math.atan2(acc_y, self.__distance(acc_x, acc_z)))
 			rot_y = math.degrees(math.atan2(acc_x, self.__distance(acc_y, acc_z)))
-			rot_z = math.degrees(math.atan2(acc_z, self.__distance(acc_x, acc_y)))
+			rot_z = math.degrees(math.atan2(acc_z, self.__distance(acc_x, acc_z)))
 
 			gyro_list.append(rot_x)
 			gyro_list.append(rot_y)

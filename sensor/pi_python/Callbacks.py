@@ -18,6 +18,10 @@ def distance(payload):
 		print("distance:: payload too long " + str(len(payload)))
 		return
 
+	# Convert raw data to distance in cm
+	# See: http://www.instructables.com/id/Get-started-with-distance-sensors-and-Arduino/
+	payload[0] = (6762 / (payload[0] - 9)) - 4
+
 	values = Helper.listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(

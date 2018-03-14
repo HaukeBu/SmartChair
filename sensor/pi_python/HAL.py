@@ -11,13 +11,13 @@ class HAL():
 
 	class __impl:
 		def __init__(self):
-			bus = smbus.SMBus(1)
-			bus.write_byte_data(GYRO_BACK_ADDRESS, POWER_MGMT, 0)
-			bus.write_byte_data(GYRO_SEAT_ADDRESS, POWER_MGMT, 0)
+			self.bus = smbus.SMBus(1)
+			self.bus.write_byte_data(GYRO_BACK_ADDRESS, POWER_MGMT, 0)
+			self.bus.write_byte_data(GYRO_SEAT_ADDRESS, POWER_MGMT, 0)
 
 		def __readWord2c(self, gyro_address, reg):
-			h = bus.read_byte_data(gyro_address, reg)
-			l = bus.read_byte_data(gyro_address, reg + 1)
+			h = self.bus.read_byte_data(gyro_address, reg)
+			l = self.bus.read_byte_data(gyro_address, reg + 1)
 			value = (h << 8) + l
 
 			if value >= 0x8000:

@@ -67,12 +67,23 @@ def temperature(payload):
 
 	grpc_handler.GRPCQueue().addMessage(message)
 
-def gyroscope(payload):
+def gyroscopeBack(payload):
 	values = Helper.listToJSONString(payload)
 
 	message = grpc_handler.buildMessage(
 		version = Constants.GRPC_VERSION,
-		sensor_type = Constants.GRPCHeader.GYROSCOPE,
+		sensor_type = Constants.GRPCHeader.GYROSCOPE_BACK,
+		values = values
+	)
+
+	grpc_handler.GRPCQueue().addMessage(message)
+
+def gyroscopeSeat(payload):
+	values = Helper.listToJSONString(payload)
+
+	message = grpc_handler.buildMessage(
+		version = Constants.GRPC_VERSION,
+		sensor_type = Constants.GRPCHeader.GYROSCOPE_SEAT,
 		values = values
 	)
 

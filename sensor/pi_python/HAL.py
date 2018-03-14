@@ -25,18 +25,34 @@ class HAL():
 			else:
 				return value
 
+		def __distance(self, a, b):
+			return math.sqrt((a*a) + (b*b))
+
 		def getGyroBack(self):
 			gyro_list = []
 
 			# Accelerator
-			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x3b))
-			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x3d))
-			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x3f))
+			acc_x = self.__readWord2c(GYRO_BACK_ADDRESS, 0x3b)
+			acc_y = self.__readWord2c(GYRO_BACK_ADDRESS, 0x3d)
+			acc_z = self.__readWord2c(GYRO_BACK_ADDRESS, 0x3f)
+
+			gyro_list.append(acc_x)
+			gyro_list.append(acc_y)
+			gyro_list.append(acc_z)
 
 			# Gyroscope
 			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x43))
 			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x45))
 			gyro_list.append(self.__readWord2c(GYRO_BACK_ADDRESS, 0x47))
+
+			# Rotation
+			rot_x = math.degrees(math.atan2(acc_y, self.__distance(acc_x, acc_z)))
+			rot_y = math.degrees(math.atan2(acc_x, self.__distance(acc_y, acc_z)))
+			rot_z = math.degrees(math.atan2(acc_z, self.__distance(acc_x, acc_y)))
+
+			gyro_list.append(rot_x)
+			gyro_list.append(rot_y)
+			gyro_list.append(rot_z)
 
 			return gyro_list
 
@@ -44,14 +60,27 @@ class HAL():
 			gyro_list = []
 
 			# Accelerator
-			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3b))
-			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3d))
-			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3f))
+			acc_x = self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3b)
+			acc_y = self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3d)
+			acc_z = self.__readWord2c(GYRO_SEAT_ADDRESS, 0x3f)
+
+			gyro_list.append(acc_x)
+			gyro_list.append(acc_y)
+			gyro_list.append(acc_z)
 
 			# Gyroscope
 			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x43))
 			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x45))
 			gyro_list.append(self.__readWord2c(GYRO_SEAT_ADDRESS, 0x47))
+
+			rot_x = math.degrees(math.atan2(acc_y, self.__distance(acc_x, acc_z)))
+			rot_y = math.degrees(math.atan2(acc_x, self.__distance(acc_y, acc_z)))
+			rot_z = math.degrees(math.atan2(acc_z, self.__distance(acc_x, acc_y)))
+
+			# Rotation
+			gyro_list.append(rot_x)
+			gyro_list.append(rot_y)
+			gyro_list.append(rot_z)
 
 			return gyro_list
 

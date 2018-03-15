@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+service ChairService{
+    rpc ChairUpdate (Chair) returns (ChairResponse) {}
+}
+
+message Chair{
+    int32 version = 1;			// Protocol version between OE HAL and device
+    int64 timestamp = 2;		// UTC timestamp from creation of message
+    int32 sensor_type = 3;	// Type ID of sensor (unique between OE HAL and device)
+    string values = 4;			// JSON set containing elements with format:
+    // {
+    //		id: 			// Sensor ID (unique in this set)
+    //		value:		// Value of sensor (either string, bool, int or float)
+    // }
+}
+
+message ChairResponse{
+    bool success = 1;
+}

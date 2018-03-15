@@ -1,4 +1,4 @@
-var PROTO_PATH_SMART_CHAIR_STUDENT_INTERFACE_SERVICE = __dirname + '/grpcFiles/SmartChairStudentInterface.proto';
+var PROTO_PATH_SMART_CHAIR_STUDENT_INTERFACE_SERVICE = __dirname + '/../proto/SmartChairStudentInterface.proto';
 
 var grpc = require('grpc');
 
@@ -6,7 +6,7 @@ var protoDescriptorSmartChairStudentInterfaceService = grpc.load(PROTO_PATH_SMAR
 var smartChairStudentInterfaceService = protoDescriptorSmartChairStudentInterfaceService.SmartChairStudentInterfaceService;
 
 
-var client = new smartChairStudentInterfaceService('192.168.188.39:50051', grpc.credentials.createInsecure()); // TODO: Check ip!
+var client = new smartChairStudentInterfaceService('localhost:50051', grpc.credentials.createInsecure()); // TODO: Check ip!
 
 client.getAll({'version':1}, function(err, response) {
     console.log("\n************ getAll: ");

@@ -1,5 +1,5 @@
-var PROTO_PATH_CHAIR_SERVICE = __dirname + '/./grpcFiles/Chair.proto';
-var PROTO_PATH_SMART_CHAIR_STUDENT_INTERFACE_SERVICE = __dirname + '/./grpcFiles/SmartChairStudentInterface.proto';
+var PROTO_PATH_CHAIR_SERVICE = __dirname + '/../proto/Chair.proto';
+var PROTO_PATH_SMART_CHAIR_STUDENT_INTERFACE_SERVICE = __dirname + '/../proto/SmartChairStudentInterface.proto';
 
 var grpc = require('grpc');
 
@@ -231,7 +231,7 @@ function getMotionBackrestGyroscopeImpl(request) {
 }
 function getMotionBackrestAccelerometerImpl(request) {
     var valuesObj = {};
-    valuesObj['acceleration'] = chair['motion']['backrest']['acceleration'];
+    valuesObj['accelerometer'] = chair['motion']['backrest']['accelerometer'];
     return createResponse(valuesObj);
 }
 function getMotionBackrestRotationAngleImpl(request) {
@@ -249,7 +249,7 @@ function getMotionSeatGyroscopeImpl(request) {
 }
 function getMotionSeatAccelerometerImpl(request) {
     var valuesObj = {};
-    valuesObj['acceleration'] = chair['motion']['seat']['acceleration'];
+    valuesObj['accelerometer'] = chair['motion']['seat']['accelerometer'];
     return createResponse(valuesObj);
 }
 function getMotionSeatRotationAngleImpl(request) {
@@ -335,7 +335,7 @@ function getServer() {
 }
 
 var routeServer = getServer();
-routeServer.bind('192.168.188.39:50051', grpc.ServerCredentials.createInsecure());
+routeServer.bind('localhost:50051', grpc.ServerCredentials.createInsecure());
 routeServer.start();
 
 console.log("Server is running!");

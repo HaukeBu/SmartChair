@@ -30,30 +30,28 @@ chair['motion']['backrest']['rotationAngle'] = [];
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// HAL Interface
 function HALInterfaceImpl(request){
+    /*
     console.log("");
     console.log("");
     console.log("grpcCallReceived");
 
-    var tempPlatformMessage = {
-        version: 1,
-        json: '{"version": 1, "callObject": "test1"}'
-    };
-
-    /*
     console.log("Type of request: " + typeof(request));
     console.log("request: " + request);
     console.log(request);
     console.log(request['version']);
     console.log(request['timestamp']);
     console.log(request['sensor_type']);
-    */
+
     console.log(request['values']);
+    */
 
     var response = processMessage(request);
 
+    /*
     console.log("");
     console.log("Type of response: " + typeof(response));
     console.log(response);
+    */
 
     return response;
 }
@@ -70,7 +68,7 @@ function processMessage(request) {
     switch( request['sensor_type']) {
         case 0 :
             // Debug
-            console.log("Debug Message timestamp: " + request['timestamp']);
+            //console.log("Debug Message timestamp: " + request['timestamp']);
 
             for(var i = 0; i < values.length; i++){
                 console.log("Debug Message id: " + values[i]['id'] + ", value: " + values[i]['value']);
@@ -142,7 +140,7 @@ function processMessage(request) {
             for(var i = 0; i < valuesPerKind && i < values.length; i++){
                 chair['motion']['seat']['gyroscope'][i] = values[i]['value'];
 
-                console.log("Seat Rotation " + i + ": " + values[i]['value']);
+                //console.log("Seat Rotation " + i + ": " + values[i]['value']);
             }
 
             // Accelerometer
@@ -150,7 +148,7 @@ function processMessage(request) {
             for(var i = 0; (i + offsetAccelerometer) < (valuesPerKind + offsetAccelerometer) && (i + offsetAccelerometer) < values.length; i++){
                 chair['motion']['seat']['accelerometer'][i] = values[offsetAccelerometer + i]['value'];
 
-                console.log("Seat Rotation " + i + ": " + values[offsetAccelerometer + i]['value']);
+                //console.log("Seat Rotation " + i + ": " + values[offsetAccelerometer + i]['value']);
             }
 
             // Rotation Angle
@@ -158,7 +156,7 @@ function processMessage(request) {
             for(var i = 0; (i + offsetRotationAngle) < (valuesPerKind + offsetRotationAngle) && (i + offsetRotationAngle) < values.length; i++){
                 chair['motion']['seat']['rotationAngle'][i] = values[offsetRotationAngle + i]['value'];
 
-                console.log("Seat Rotation " + i + ": " + values[offsetRotationAngle + i]['value']);
+                //console.log("Seat Rotation " + i + ": " + values[offsetRotationAngle + i]['value']);
             }
 
             chair['motion']['seat']['timestamp'] = timestamp;
@@ -189,14 +187,14 @@ function createResponse(valueObject) {
 }
 
 function getAllImpl(request) {
-    console.log("getAll - Request: ", request);
+    //console.log("getAll - Request: ", request);
     var response = createResponse(chair);
-    console.log("getAll - Response: ", request);
+    //console.log("getAll - Response: ", request);
     return response;
 }
 function getDistanceImpl(request) {
     var valuesObj = {};
-    console.log(chair['distance']);
+    //console.log(chair['distance']);
     valuesObj['distance'] = chair['distance'];
     return createResponse(valuesObj);
 }
@@ -334,11 +332,12 @@ function getServer() {
     return server;
 }
 
+var serverAddressAndPort = '0.0.0.0:50051';
 var routeServer = getServer();
-routeServer.bind('localhost:50051', grpc.ServerCredentials.createInsecure());
+routeServer.bind(serverAddressAndPort, grpc.ServerCredentials.createInsecure());
 routeServer.start();
 
-console.log("Server is running!");
+console.log("Server is running!\nListening bound on: " + serverAddressAndPort);
 
 
 var testRequest = {};
@@ -381,5 +380,5 @@ testRequest['sensor_type'] = 6;
 testRequest['values'] = '{"values": [{"id": 0, "value": -15956}, {"id": 1, "value": -856}, {"id": 2, "value": 3356}, {"id": 3, "value": -216}, {"id": 4, "value": 1876}, {"id": 5, "value": 16386}, {"id": 6, "value": 856}, {"id": 7, "value": -66}, {"id": 8, "value": -96}]}';
 processMessage(testRequest);
 
-console.log("Result Chair Object");
-console.log(chair);
+//console.log("Result Chair Object");
+//console.log(chair);

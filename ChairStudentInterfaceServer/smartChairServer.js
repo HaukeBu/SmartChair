@@ -110,16 +110,16 @@ function processMessage(request) {
 
         case 5 :
             // Motion Backrest
-            // Gyroscope
+            // Accelerometer
             var valuesPerKind = 3;
             for(var i = 0; i < valuesPerKind && i < values.length; i++){
-                chair['motion']['backrest']['gyroscope'][i] = values[i]['value'];
+                chair['motion']['backrest']['accelerometer'][i] = values[i]['value'];
             }
 
-            // Accelerometer
-            var offsetAccelerometer = 3;
-            for(var i = 0; (i + offsetAccelerometer) < (valuesPerKind + offsetAccelerometer) && (i + offsetAccelerometer) < values.length; i++){
-                chair['motion']['backrest']['accelerometer'][i] = values[offsetAccelerometer + i]['value'];
+            // Gyroscope
+            var offsetGyroscope = 3;
+            for(var i = 0; (i + offsetGyroscope) < (valuesPerKind + offsetGyroscope) && (i + offsetGyroscope) < values.length; i++){
+                chair['motion']['backrest']['gyroscope'][i] = values[offsetGyroscope + i]['value'];
             }
 
             // Rotation Angle
@@ -135,20 +135,20 @@ function processMessage(request) {
 
         case 6 :
             // Motion Seat
-            // Gyroscope
+            // Accelerometer
             var valuesPerKind = 3;
             for(var i = 0; i < valuesPerKind && i < values.length; i++){
-                chair['motion']['seat']['gyroscope'][i] = values[i]['value'];
+                chair['motion']['seat']['accelerometer'][i] = values[i]['value'];
 
                 //console.log("Seat Rotation " + i + ": " + values[i]['value']);
             }
 
-            // Accelerometer
-            var offsetAccelerometer = 3;
-            for(var i = 0; (i + offsetAccelerometer) < (valuesPerKind + offsetAccelerometer) && (i + offsetAccelerometer) < values.length; i++){
-                chair['motion']['seat']['accelerometer'][i] = values[offsetAccelerometer + i]['value'];
+            // Gyroscope
+            var offsetGyroscope = 3;
+            for(var i = 0; (i + offsetGyroscope) < (valuesPerKind + offsetGyroscope) && (i + offsetGyroscope) < values.length; i++){
+                chair['motion']['seat']['gyroscope'][i] = values[offsetGyroscope + i]['value'];
 
-                //console.log("Seat Rotation " + i + ": " + values[offsetAccelerometer + i]['value']);
+                //console.log("Seat Rotation " + i + ": " + values[offsetGyroscope + i]['value']);
             }
 
             // Rotation Angle

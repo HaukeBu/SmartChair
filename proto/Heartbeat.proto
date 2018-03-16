@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+service HeartbeatService{
+    rpc heartbeat (Heartbeat) returns (Heartbeat) {}
+}
+
+message Heartbeat{
+    int32 version = 1;			// Protocol version between OE HAL and device
+    int64 timestamp = 2;		// UTC timestamp from creation of message
+    string localId = 3;         // LocalId of the requested object
+}

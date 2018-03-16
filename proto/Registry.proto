@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+service RegistryService{
+    rpc registerObject (ObjectRegistrationRequest) returns (ObjectRegistrationResponse) {}
+    rpc requestObjects (ObjectDescriptionRequest) returns (ObjectDescriptionResponse) {}
+}
+
+message ObjectRegistrationRequest{
+    int32 version = 1;			// Protocol version between OE HAL and device
+    int64 timestamp = 2;		// UTC timestamp from creation of message
+    string oid = 3; 			// Sensor ID (unique in this set)
+    string symbolicName = 4;    // e.g. smartchair4
+    string grpcServer = 5;      // AddressString of own grpcServer (Should implement Heartbeat!)
+    int64 requestId = 6;        // Optional!!! Server does not use that
+}
+
+message ObjectRegistrationResponse {
+    int32 version = 1;			// Protocol version between OE HAL and device
+    int64 timestamp = 2;		// UTC timestamp from creation of message
+    bool success = 3;           // Is the Request Successful
+    string localId = 4; 	    // Sensor ID (unique in this set) Only Set if Successful!
+
+    // Copied from Request
+    string json = 5;			// JSON set containing elements with format:
+    string oid = 6; 			// Sensor ID (unique in this set)
+    string symbolicName = 7;    // e.g. smartchair4
+    string grpcServer = 8;      // AddressString of own grpcServer (Should implement Heartbeat!)
+    int64 requestId = 9;        // Optional!!! Server does not use that
+}
+
+message ObjectDescriptionRequest{
+    int32 version = 1;			// Protocol version between OE HAL and device
+    int64 timestamp = 2;		// UTC timestamp from creation of message
+    string oid = 3; 			// Sensor ID (unique in this set)
+    int64 requestId = 4;        // Optional!!! Server does not use that
+}
+
+message ObjectDescriptionResponse{
+    int32 version = 1;			// Protocol version between OE HAL and device
+    int64 timestamp = 2;		// UTC timestamp from creation of message
+    string oid = 3; 			// Sensor ID (unique in this set)
+    int64 requestId = 4;        // Optional!!! Server does not use that
+    string json = 5;            // JSON Encoded ObjectInformation
+}

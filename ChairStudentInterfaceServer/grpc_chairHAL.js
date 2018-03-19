@@ -335,7 +335,7 @@ function getServer() {
 }
 
 var routeServer = getServer();
-routeServer.bind('localhost:50051', grpc.ServerCredentials.createInsecure());
+routeServer.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
 routeServer.start();
 
 console.log("Server is running!");

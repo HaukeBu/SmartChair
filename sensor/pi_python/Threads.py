@@ -81,6 +81,7 @@ class GyroscopeThread(threading.Thread):
 		self.gy = gy.Gyroscope(address)
 
 	def run(self):
+		self.gy.initialize()
 		while True:
 			sleep_time = self.gy.acquireData()
 			time.sleep(sleep_time)

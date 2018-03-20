@@ -28,14 +28,16 @@ def main():
 	hal_thread = Threads.HALThread()
 	message_thread = Threads.MessageThread()
 
-	dispatcher.initialize(port, Constants.SERIAL_BAUDRATE)
-	serial_thread = Threads.SerialThread(dispatcher)
-
-	serial_thread.start()
-	hal_thread.start()
 	message_thread.start()
+	hal_thread.start()
 
-	serial_thread.join()
+	if dispatcher.initialize(port, Constants.SERIAL_BAUDRATE):
+		serial_thread = Threads.SerialThread(dispatcher)
+		serial_thread.start()
+		serial_thread.join()	
+	else:
+		print("Failed to open serial port")
+
 	hal_thread.join()
 	message_thread.join()
 

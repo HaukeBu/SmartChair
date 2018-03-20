@@ -20,7 +20,7 @@ class SerialDispatcher():
 		try:
 			self.ser_con.open()
 		except serial.SerialException:
-			return 1
+			return False
 
 		self.ser_con.flushOutput()
 		self.ser_con.flushInput()
@@ -32,6 +32,8 @@ class SerialDispatcher():
 		self.initialized = True
 
 		print("Initialized serial dispatcher")
+
+		return True
 
 	def __sendInitMessage(self):
 		crc_list = []

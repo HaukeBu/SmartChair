@@ -30,9 +30,9 @@ class Gyroscope():
 			self.gyro_y = 0
 			self.gyro_z = 0
 
-			self.x_offset = 0
-			self.y_offset = 0
-			self.z_offset = 0
+			self.x_offset = -281.00
+			self.y_offset = 18.00
+			self.z_offset = -83.00
 
 			self.initialized = False
 
@@ -46,7 +46,7 @@ class Gyroscope():
 
 			self.bus.write_byte_data(self.address, GYRO_CONFIG_FULL_SCALE, 0x08)
 
-			sample_div = 1000 / Constants.GYRO_SAMPLE_FREQUENCY - 1;
+			sample_div = int(1000 / Constants.GYRO_SAMPLE_FREQUENCY - 1);
 			self.bus.write_byte_data(self.address, GYRO_CONFIG_SAMPLE_RATE, sample_div);
 
 			self.__calibrate()
@@ -58,29 +58,37 @@ class Gyroscope():
 				return -1
 
 			self.values_mutex.acquire()
-			start_time = int(round(time.time() * 1000))
+			start_time = round(time.time() * 1000)
+
+			self.values[:] = []
 
 			self.__readData()
 
 			gyro_list = self.values
 
-			ay = math.distance(math.atan2(gyro_list[GYRO_ACC_X]
+			ay = math.degrees(math.atan2(gyro_list[GYRO_ACC_X]
 					, self.__distance(gyro_list[GYRO_ACC_Y], gyro_list[GYRO_ACC_Z])))
 
-			ax = math.distance(math.atan2(gyro_list[GYRO_ACC_Y]
+			ax = math.degrees(math.atan2(gyro_list[GYRO_ACC_Y]
 					, self.__distance(gyro_list[GYRO_ACC_X], gyro_list[GYRO_ACC_Z])))
 
 			self.gyro_x = self.gyro_x + gyro_list[GYRO_X] / Constants.GYRO_SAMPLE_FREQUENCY
-			self.gyro_y = self.gyro_y + gyro_list[GYRO_Y] / Constants.GYRO_SAMPLE_FREQUENCY
+			self.gyro_y = self.gyro_y - gyro_list[GYRO_Y] / Constants.GYRO_SAMPLE_FREQUENCY
 			self.gyro_z = self.gyro_z + gyro_list[GYRO_Z] / Constants.GYRO_SAMPLE_FREQUENCY
 
 			self.gyro_x = self.gyro_x * 0.96 + ax * 0.04
 			self.gyro_y = self.gyro_y * 0.96 + ay * 0.04
 
-		    end_time = int(round(time.time() * 1000))
+			gyro_list.append(self.gyro_x)
+			gyro_list.append(self.gyro_y)
+			gyro_list.append(self.gyro_z)
+
+			end_time = round(time.time() * 1000)
 			self.values_mutex.release()
 
-			return ((1 / Constants.GYRO_SAMPLE_FREQUENCY) * 1000) - (end_time - start_time)
+			sleep_time = ((1.0 / Constants.GYRO_SAMPLE_FREQUENCY) * 1000.0) - (end_time - start_time)
+
+			return sleep_time / 1000
 
 		def getData(self):
 			if not self.initialized:
@@ -93,19 +101,19 @@ class Gyroscope():
 			return ret
 
 		def __calibrate(self):
-			x_offset = 0
-			y_offset = 0
-			z_offset = 0
+			x_offset = 0.0
+			y_offset = 0.0
+			z_offset = 0.0
 
 			for i in range(Constants.GYRO_CALIBRATION_LOOP):
 				x_offset += self.__readWord2c(0x43)
 				y_offset += self.__readWord2c(0x45)
 				z_offset += self.__readWord2c(0x47)
-			}
 
-			self.x_offset = x_offset / GYRO_CALIBRATION_LOOP;
-			self.y_offset = y_offset / GYRO_CALIBRATION_LOOP;
-			self.z_offset = z_offset / GYRO_CALIBRATION_LOOP;
+
+			self.x_offset = x_offset / Constants.GYRO_CALIBRATION_LOOP
+			self.y_offset = y_offset / Constants.GYRO_CALIBRATION_LOOP
+			self.z_offset = z_offset / Constants.GYRO_CALIBRATION_LOOP
 
 
 		def __readData(self):
@@ -128,16 +136,19 @@ class Gyroscope():
 			l = self.bus.read_byte_data(self.address, reg + 1)
 			value = (h << 8) + l
 
+			ret = 0.0
 			if value >= 0x8000:
-				return -((65535 - value) + 1)
+				ret = -((65535 - value) + 1)
 			else:
-				return value
+				ret = value
+
+			return ret * 1.0
 
 		def __distance(self, a, b):
 			return math.sqrt((a*a) + (b*b))
 
 	def __init__(self, address):
-		if idx not in Gyroscope.__instances:
+		if address not in Gyroscope.__instances:
 			Gyroscope.__instances[address] = Gyroscope.__impl(address)
 
 		self.__address = address

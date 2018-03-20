@@ -22,7 +22,9 @@ class MessageThread(threading.Thread):
 		while True:
 			message = queue.getMessage()
 			if type(message) != type(False):
-				handler.sendMessage(message)
+				for i in range(Constants.GRPC_FAIL_RETRY):
+					if handler.sendMessage(message):
+						break
 
 class SerialThread(threading.Thread):
 	def __init__(self, serial):

@@ -11,12 +11,6 @@ import HAL as hal
 
 
 def main():
-	port = getSerialPort()
-
-	if port == False:
-		print("Failed to find serial port")
-		return
-
 	dispatcher = sd.SerialDispatcher()
 	for header in Constants.SerialHeader:
 		if header.name in Config.config:
@@ -24,6 +18,12 @@ def main():
 			if interval > 1:
 				function = getattr(cb, Helper.uppercaseToCamelcase(header.name))
 				dispatcher.appendCallback(header, function, interval)
+
+	serial_port = getSerialPort()
+
+	if serial_port == False or dispatcher.initialize(serial_port, Constants.SERIAL_BAUDRATE) == False:
+		print("Failed to find serial port")
+		return
 
 	hal_instance = hal.HAL()
 	for element in Constants.GyroscopeType:
@@ -33,19 +33,16 @@ def main():
 		if interval > 0:
 			hal_instance.addCallback(address, interval)
 
+
+	serial_thread = Threads.SerialThread(dispatcher)
 	hal_thread = Threads.HALThread()
 	message_thread = Threads.MessageThread()
 
-	message_thread.start()
+	serial_thread.start()
 	hal_thread.start()
+	message_thread.start()
 
-	if dispatcher.initialize(port, Constants.SERIAL_BAUDRATE):
-		serial_thread = Threads.SerialThread(dispatcher)
-		serial_thread.start()
-		serial_thread.join()
-	else:
-		print("Failed to open serial port")
-
+	serial_thread.join()
 	hal_thread.join()
 	message_thread.join()
 

@@ -3,6 +3,10 @@ import CRC16
 import Constants
 import time
 
+SERIAL_READ_START = 0xAF
+SERIAL_READ_END = 0xFE
+SERIAL_SEND_START = 0xDE
+SERIAL_SEND_END = 0xED
 
 class SerialDispatcher():
 	def __init__(self):
@@ -53,12 +57,12 @@ class SerialDispatcher():
 
 		crc = CRC16.crc16_ccitt(crc_list, len(crc_list))
 
-		self.ser_con.write(chr(Constants.SERIAL_SEND_START))
+		self.ser_con.write(chr(SERIAL_SEND_START))
 		for val in crc_list:
 			self.ser_con.write(chr(val))
 		self.ser_con.write(chr(crc & 0xFF))
 		self.ser_con.write(chr(crc >> 8))
-		self.ser_con.write(chr(Constants.SERIAL_SEND_END))
+		self.ser_con.write(chr(SERIAL_SEND_END))
 
 
 	def appendCallback(self, idx, cb, interval):
@@ -76,7 +80,7 @@ class SerialDispatcher():
 
 	def dispatch(self):
 		# Read until start sequence occurs
-		while self.__readByte() != Constants.SERIAL_READ_START:
+		while self.__readByte() != SERIAL_READ_START:
 			time.sleep(0.01)
 
 		buffer = []
@@ -97,19 +101,15 @@ class SerialDispatcher():
 		crc = (crc2 << 8) | crc1
 
 		last_byte = self.__readByte()
-		if last_byte != Constants.SERIAL_READ_END:
-			print("No Termination byte " + hex(last_byte))
+		if last_byte != SERIAL_READ_END:
 			return Constants.SerialDispatchError.NO_TERMINATION_BYTE
 
 
 		crc_t = CRC16.crc16_ccitt(buffer, buffer[2] + 3)
 		if crc != crc_t:
-			print("*** Checksum error")
-			print("Sent: " + hex(crc) + ", Check: " + hex(crc_t))
 			return Constants.SerialDispatchError.CHECKSUM_ERROR
 
 		if buffer[0] != Constants.SERIAL_VERSION:
-			print("Version error")
 			return Constants.SerialDispatchError.VERSION_ERROR
 
 		payload = []

@@ -27,8 +27,9 @@ def main():
 
 	hal_instance = hal.HAL()
 	for element in Constants.GyroscopeType:
-		interval = int(Config.config[element.name]['Interval'])
-		address = int(Config.config[element.name]['Address'])
+		name = "GYROSCOPE_" + element.name
+		interval = int(Config.config[name]['Interval'])
+		address = int(Config.config[name]['Address'], 16)
 		if interval > 0:
 			hal_instance.addCallback(address, interval)
 

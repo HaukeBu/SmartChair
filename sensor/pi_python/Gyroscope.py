@@ -2,6 +2,7 @@ import smbus
 import math
 import Constants
 from threading import Lock
+import time
 
 GYRO_CONFIG_POWER = 0x6B
 GYRO_CONFIG_LOWPASS = 0x1A

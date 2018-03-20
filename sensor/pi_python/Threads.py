@@ -44,6 +44,8 @@ class HALThread(threading.Thread):
 		self.interval_list = self.hal_instance.getIntervalList()
 
 		self.next_wakeup = {}
+		for address, val in self.interval_list.iteritems():
+			self.next_wakeup[int(address)] = 0
 
 
 	def __getMillis(self):
@@ -53,16 +55,16 @@ class HALThread(threading.Thread):
 		ret = sys.maxint
 
 		for address, wakeup in self.next_wakeup.iteritems():
-			if ret > (self.wakeup - self.__getMillis()):
-				ret = self.wakeup - self.__getMillis()
+			if ret > (wakeup - self.__getMillis()):
+				ret = wakeup - self.__getMillis()
 
 		return max(0, ret / 1000)
 
 	def run(self):
-		if interval_list:
+		if self.interval_list:
 			while True:
-				for address, interval in interval_list.iteritems():
-					if self.next_wakeup[address] <= self.__getMillis():
+				for address, interval in self.interval_list.iteritems():
+					if self.next_wakeup[int(address)] <= self.__getMillis():
 						sensor_data = self.hal_instance.getData(address)
 						Callbacks.gyroscope(address, sensor_data)
 						self.next_wakeup[address] = interval + self.__getMillis()

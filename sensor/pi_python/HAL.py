@@ -1,5 +1,7 @@
 import Gyroscope as gy
 import Config
+import Constants
+import Threads
 
 class HAL():
 	__instance = None
@@ -10,10 +12,10 @@ class HAL():
 
 		def addCallback(self, address, interval):
 			print("Add new callback function for GYROSCOPE_"
-					+ GyroscopeType(address).name +
-					", Interval = " + interval)
+					+ Constants.GyroscopeType(address).name +
+					", Interval = " + str(interval))
 
-			thread = gy.GyroscopeThread(back_info['Address'])
+			thread = Threads.GyroscopeThread(address)
 			thread.start()
 
 			self.interval_list[address] = interval

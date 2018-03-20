@@ -30,6 +30,8 @@ for entry in Config.config['GYROSCOPE']:
 	try:
 		if "0x" in val:
 			exec("%s = %d" % (name, int(val, 16)))
+		elif "." in val:
+			exec("%s = %f" % (name, float(val)))
 		else:
 			exec("%s = %d" % (name, int(val)))
 	except:

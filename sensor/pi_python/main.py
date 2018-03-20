@@ -7,6 +7,7 @@ import Constants
 import Config
 import time
 import Helper
+import HAL as hal
 
 
 def main():
@@ -17,13 +18,19 @@ def main():
 		return
 
 	dispatcher = sd.SerialDispatcher()
-
 	for header in Constants.SerialHeader:
 		if header.name in Config.config:
 			interval = int(Config.config[header.name]['Interval'])
 			if interval > 1:
 				function = getattr(cb, Helper.uppercaseToCamelcase(header.name))
 				dispatcher.appendCallback(header, function, interval)
+
+	hal_instance = hal.HAL()
+	for element in Constants.GyroscopeType:
+		interval = int(Config.config[element.name]['Interval'])
+		address = int(Config.config[element.name]['Address'])
+		if interval > 0:
+			hal_instance.addCallback(address, interval)
 
 	hal_thread = Threads.HALThread()
 	message_thread = Threads.MessageThread()
@@ -34,7 +41,7 @@ def main():
 	if dispatcher.initialize(port, Constants.SERIAL_BAUDRATE):
 		serial_thread = Threads.SerialThread(dispatcher)
 		serial_thread.start()
-		serial_thread.join()	
+		serial_thread.join()
 	else:
 		print("Failed to open serial port")
 

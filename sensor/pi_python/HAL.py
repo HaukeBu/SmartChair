@@ -19,7 +19,10 @@ class HAL():
 			self.interval_list[address] = interval
 
 		def getData(self, address):
+			return gy.Gyroscope(address).getData()
 
+		def getIntervalList(self):
+			return self.interval_list
 
 
 	def __init__(self):

@@ -35,7 +35,7 @@ function registerImpl(registryGrpcAddressParam, registrationInformationParam, lo
             'timestamp': new Date().valueOf(),
             'oid': registrationInformation['oid'],
             'symbolicName': registrationInformation['symbolicName'],
-            'grpcServer': registrationInformation['serverAddressAndPort'] ,
+            'grpcServer': registrationInformation['serverAddress'] ,
             'requestId': 1
         }, function(err, response) {
 
@@ -57,6 +57,7 @@ function registerImpl(registryGrpcAddressParam, registrationInformationParam, lo
 
 function checkLogInStatus() {
     console.log("checkLogInStatus -- Called!");
+    console.log(new Date().valueOf());
     console.log(heartbeatService.hearbeatReceived());
     if(heartbeatService.hearbeatReceived()) {
         heartbeatService.resetHearbeatReceived();
@@ -68,6 +69,8 @@ function checkLogInStatus() {
 
 // Functions
 function startRegistryLoginCheckImpl() {
+    stopRegistryLoginCheckImpl();
+    
     if (localHeartbeatCheckIntervaInMilliseconds > 0) {
         console.log("Check Hearbeat Enabled!!");
         intervalId = setInterval(checkLogInStatus, localHeartbeatCheckIntervaInMilliseconds);

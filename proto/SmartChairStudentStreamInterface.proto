@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+service SmartChairStudentStreamInterfaceService{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // get All Values
+    //
+    rpc getAllStream (ChairRequest) returns (stream ChairResponse) {}
+}
+
+message ChairResponse{
+    int32 version = 1;			// Protocol version between OE HAL and device
+    bool success = 2;           // Success of the request
+    int64 timestamp = 3;		// UTC timestamp of Request processing
+    string json = 4;			// JSON set containing elements with format
+}
+
+message ChairRequest{
+    int32 version = 1;          // Request Version
+}

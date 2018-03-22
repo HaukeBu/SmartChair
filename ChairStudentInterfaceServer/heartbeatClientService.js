@@ -9,10 +9,11 @@ var heartbeatService = protoDescriptorHeartbeatService.HeartbeatService;
 //// Internal Variables
 var localHeartbeatCheckIntervaInMilliseconds = 0;  // Test without Registry
 var heartbeatReceived = true;
+var localId = null;
 
-var intervalId = 0;
 
 
+// GRPC
 function heartbeatImpl(request) {
     if(localId === request['localId']){
         console.log("Heartbeat Received");
@@ -28,27 +29,23 @@ function heartbeatInt(call, callback) {
     callback(null, heartbeatImpl(call.request));
 }
 
-function stopHeartbeat() {
-    if(intervalId !== 0){
-        clearInterval(intervalId);
-    }
-
-    intervalId = 0;
-}
-
-if (localHeartbeatCheckIntervaInMilliseconds > 0){
-    intervalID = setInterval(checkLogInStatus, localHeartbeatCheckIntervaInMilliseconds);
-}
-
 
 module.exports = {
-    init : function (grpcServer, localHeartbeatCheckIntervaInMilliseconds) {
+    init : function (grpcServer, localId) {
+        this.localId = localId;
+
         grpcServer.addService(heartbeatService.service, {
             heartbeat: heartbeatInt
         });
     },
-    getHearbeatReceived : function (){
+    hearbeatReceived : function (){
         return heartbeatReceived;
+    },
+    resetHearbeatReceived : function (){
+        heartbeatReceived = false;
+    },
+    setLocalId : function (localIdParam){
+        localId =  localIdParam;
     },
     getCurrentHeartbeatIntervalInMilliseconds : function () {
       return localHeartbeatCheckIntervaInMilliseconds;
@@ -57,4 +54,4 @@ module.exports = {
         stopHeartbeat();
     }
 
-}
+};

@@ -26,6 +26,7 @@ function registerImpl(registryGrpcAddressParam, registrationInformationParam, lo
         return;
     }
 
+    console.log(registryGrpcAddress);
     var client = new registryService(registryGrpcAddress, grpc.credentials.createInsecure());
 
     console.log("Registry called.");
@@ -55,17 +56,20 @@ function registerImpl(registryGrpcAddressParam, registrationInformationParam, lo
 }
 
 function checkLogInStatus() {
-    if(heartbeatService.hearbeatReceived) {
+    console.log("checkLogInStatus -- Called!");
+    console.log(heartbeatService.hearbeatReceived());
+    if(heartbeatService.hearbeatReceived()) {
         heartbeatService.resetHearbeatReceived();
     } else {
         console.log("Registry has not performed a Heartbeat. -> Reconnect Triggered!");
-        registerImpl();
+        registerImpl(registryGrpcAddress, registrationInformation, localHeartbeatCheckIntervaInMilliseconds, heartbeatService);
     }
 }
 
 // Functions
 function startRegistryLoginCheckImpl() {
     if (localHeartbeatCheckIntervaInMilliseconds > 0) {
+        console.log("Check Hearbeat Enabled!!");
         intervalId = setInterval(checkLogInStatus, localHeartbeatCheckIntervaInMilliseconds);
     }
 }

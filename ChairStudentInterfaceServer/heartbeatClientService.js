@@ -12,7 +12,6 @@ var heartbeatReceived = true;
 var localId = null;
 
 
-
 // GRPC
 function heartbeatImpl(request) {
     if(localId === request['localId']){

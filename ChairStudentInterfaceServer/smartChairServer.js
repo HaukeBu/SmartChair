@@ -10,7 +10,7 @@ var registryAddress = "0.0.0.0:50052";  // Registry Address to connect to
 var deviceGrpcAddress = null;
 
 
-var localHeartbeatCheckIntervaInMilliseconds = 60000;  // With Heartbeat Check interval
+var localHeartbeatCheckIntervaInMilliseconds = 20000;  // With Heartbeat Check interval
 //var localHeartbeatCheckIntervaInMilliseconds = 0;  // Test without Registry
 var symbolicName = "smartchair4";
 var oid = "0.0.1";

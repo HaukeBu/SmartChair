@@ -22,6 +22,3 @@ def listToJSONString(lst):
 	ret_str += ']}'
 
 	return ret_str
-
-if __name__ == "__main__":
-	print(camelcaseToUppercase("ServerIP"))

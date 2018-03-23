@@ -61,10 +61,10 @@ class GRPCHandler():
 		def sendMessage(self, message):
 			if self.is_initialized:
 				try:
-					ret = self.grpc_service.ChairUpdate(message)
-					print("grpc message ret = " + str(ret))
+					self.grpc_service.ChairUpdate(message)
+					return True
 				except:
-					print("grpc send error")
+					return False
 
 	def __init__(self):
 		if GRPCHandler.__instance is None:

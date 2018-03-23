@@ -24,6 +24,19 @@ for entry in Config.config['GRPC']:
 	except:
 		exec("%s = '%s'" % (name, val))
 
+for entry in Config.config['GYROSCOPE']:
+	name = "GYRO_" + Helper.camelcaseToUppercase(entry)
+	val = Config.config['GYROSCOPE'][entry]
+	try:
+		if "0x" in val:
+			exec("%s = %d" % (name, int(val, 16)))
+		elif "." in val:
+			exec("%s = %f" % (name, float(val)))
+		else:
+			exec("%s = %d" % (name, int(val)))
+	except:
+		exec("%s = '%s'" % (name, val))
+
 class SerialHeader(Enum):
 	DEBUG = 0
 	DISTANCE = 1
@@ -39,6 +52,10 @@ class GRPCHeader(Enum):
 	TEMPERATURE = 4
 	GYROSCOPE_BACK = 5
 	GYROSCOPE_SEAT = 6
+
+class GyroscopeType(Enum):
+	BACK = 0x68
+	SEAT = 0x69
 
 class SerialDispatchError(Enum):
 	NO_TERMINATION_BYTE = 1

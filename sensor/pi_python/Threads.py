@@ -5,6 +5,8 @@ import HAL as hal
 import Constants
 import Config
 import Callbacks
+import Gyroscope as gy
+import sys
 
 class MessageThread(threading.Thread):
 	def __init__(self):
@@ -12,7 +14,6 @@ class MessageThread(threading.Thread):
 		self.daemon = True
 
 	def run(self):
-		print("Start message")
 		queue = grpc_handler.GRPCQueue()
 		handler = grpc_handler.GRPCHandler()
 
@@ -21,7 +22,9 @@ class MessageThread(threading.Thread):
 		while True:
 			message = queue.getMessage()
 			if type(message) != type(False):
-				handler.sendMessage(message)
+				for i in range(Constants.GRPC_FAIL_RETRY):
+					if handler.sendMessage(message):
+						break
 
 class SerialThread(threading.Thread):
 	def __init__(self, serial):
@@ -31,7 +34,6 @@ class SerialThread(threading.Thread):
 		self.ser_dispatcher = serial
 
 	def run(self):
-		print("Start serial thread")
 		while True:
 			self.ser_dispatcher.dispatch()
 
@@ -40,44 +42,46 @@ class HALThread(threading.Thread):
 		threading.Thread.__init__(self)
 		self.daemon = True
 
-		self.interval_back = int(Config.config['GYROSCOPE_BACK']['Interval'])
-		if self.interval_back > 0:
-			print("Add new callback function for GYROSCOPE_BACK, Interval = " + str(self.interval_back))
+		self.hal_instance = hal.HAL()
+		self.interval_list = self.hal_instance.getIntervalList()
 
-		self.interval_seat = int(Config.config['GYROSCOPE_SEAT']['Interval'])
-		if self.interval_seat > 0:
-			print("Add new callback function for GYROSCOPE_SEAT, Interval = " + str(self.interval_seat))
-		self.next_back = 0
-		self.next_seat = 0
+		self.next_wakeup = {}
+		for address, val in self.interval_list.iteritems():
+			self.next_wakeup[int(address)] = 0
+
 
 	def __getMillis(self):
 		return int(round(time.time() * 1000))
 
 	def __sleepTime(self):
-		ret = 0
+		ret = sys.maxint
 
-		if self.interval_back > 0 and self.interval_seat == 0:
-			ret = self.next_back - self.__getMillis()
-		elif self.interval_seat > 0 and self.interval_back == 0:
-			ret = self.next_seat - self.__getMillis()
-		else:
-			ret = min(self.next_back - self.__getMillis()
-					, self.next_seat - self.__getMillis())
+		for address, wakeup in self.next_wakeup.iteritems():
+			if ret > (wakeup - self.__getMillis()):
+				ret = wakeup - self.__getMillis()
 
 		return max(0, ret / 1000)
 
 	def run(self):
-		hal_sensors = hal.HAL()
-		if self.interval_back > 0 or self.interval_seat > 0:
+		if self.interval_list:
 			while True:
-				if self.interval_back > 0 and self.next_back <= self.__getMillis():
-					sensor_data = hal_sensors.getGyroBack()
-					Callbacks.gyroscopeBack(sensor_data)
-					self.next_back = self.__getMillis() + self.interval_back
-
-				if self.interval_seat > 0 and self.next_seat <= self.__getMillis():
-					sensor_data = hal_sensors.getGyroSeat()
-					Callbacks.gyroscopeSeat(sensor_data)
-					self.next_seat = self.__getMillis() + self.interval_seat
+				for address, interval in self.interval_list.iteritems():
+					if self.next_wakeup[int(address)] <= self.__getMillis():
+						sensor_data = self.hal_instance.getData(address)
+						Callbacks.gyroscope(address, sensor_data)
+						self.next_wakeup[address] = interval + self.__getMillis()
 
 				time.sleep(self.__sleepTime())
+
+class GyroscopeThread(threading.Thread):
+	def __init__(self, address):
+		threading.Thread.__init__(self)
+		self.daemon = True
+
+		self.gy = gy.Gyroscope(address)
+
+	def run(self):
+		self.gy.initialize()
+		while True:
+			sleep_time = self.gy.acquireData()
+			time.sleep(sleep_time)

@@ -58,3 +58,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+sensor/pi_python/pi_config.ini
+

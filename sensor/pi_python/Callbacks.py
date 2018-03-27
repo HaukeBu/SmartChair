@@ -20,7 +20,10 @@ def distance(payload):
 
 	# Convert raw data to distance in cm
 	# See: http://www.instructables.com/id/Get-started-with-distance-sensors-and-Arduino/
-	payload[0] = (6762 / (payload[0] - 9)) - 4
+	if payload[0] != 9:
+		payload[0] = (6762 / (payload[0] - 9)) - 4
+	else:
+		payload[0] = 0
 
 	values = Helper.listToJSONString(payload)
 

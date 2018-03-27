@@ -5,8 +5,16 @@ import Chair_pb2 as Chair__pb2
 
 
 class ChairServiceStub(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """
+  class GRPCHeader(Enum):
+  DEBUG = 0
+  DISTANCE = 1
+  PRESSURE_BACK = 2
+  PRESSURE_SEAT = 3
+  TEMPERATURE = 4
+  GYROSCOPE = 5
+
+  """
 
   def __init__(self, channel):
     """Constructor.
@@ -22,8 +30,16 @@ class ChairServiceStub(object):
 
 
 class ChairServiceServicer(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """
+  class GRPCHeader(Enum):
+  DEBUG = 0
+  DISTANCE = 1
+  PRESSURE_BACK = 2
+  PRESSURE_SEAT = 3
+  TEMPERATURE = 4
+  GYROSCOPE = 5
+
+  """
 
   def ChairUpdate(self, request, context):
     # missing associated documentation comment in .proto file

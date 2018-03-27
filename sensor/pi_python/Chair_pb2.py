@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='Chair.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n\x0b\x43hair.proto\"P\n\x05\x43hair\x12\x0f\n\x07version\x18\x01 \x01(\x05\x12\x11\n\ttimestamp\x18\x02 \x01(\x05\x12\x13\n\x0bsensor_type\x18\x03 \x01(\x05\x12\x0e\n\x06values\x18\x04 \x01(\t\" \n\rChairResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x37\n\x0c\x43hairService\x12\'\n\x0b\x43hairUpdate\x12\x06.Chair\x1a\x0e.ChairResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0b\x43hair.proto\"P\n\x05\x43hair\x12\x0f\n\x07version\x18\x01 \x01(\x05\x12\x11\n\ttimestamp\x18\x02 \x01(\x03\x12\x13\n\x0bsensor_type\x18\x03 \x01(\x05\x12\x0e\n\x06values\x18\x04 \x01(\t\" \n\rChairResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x37\n\x0c\x43hairService\x12\'\n\x0b\x43hairUpdate\x12\x06.Chair\x1a\x0e.ChairResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -41,7 +41,7 @@ _CHAIR = _descriptor.Descriptor(
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='timestamp', full_name='Chair.timestamp', index=1,
-      number=2, type=5, cpp_type=1, label=1,
+      number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,

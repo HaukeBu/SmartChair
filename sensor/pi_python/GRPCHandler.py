@@ -6,7 +6,7 @@ import Chair_pb2
 import Chair_pb2_grpc
 
 def buildMessage(version, sensor_type, values, timestamp = 0):
-	timestamp = int(time.time())
+	timestamp = int(time.time() * 1000)
 
 	ret_msg = Chair_pb2.Chair(version = version, timestamp = timestamp
 							, sensor_type = sensor_type.value, values = values)

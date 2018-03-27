@@ -38,6 +38,7 @@ def main():
 	hal_thread = Threads.HALThread()
 	message_thread = Threads.MessageThread()
 
+	print("Start threads...")
 	serial_thread.start()
 	hal_thread.start()
 	message_thread.start()

@@ -19,6 +19,7 @@ class MessageThread(threading.Thread):
 
 		handler.initialize(Constants.GRPC_SERVER_IP)
 
+		print("Message thread started")
 		while True:
 			message = queue.getMessage()
 			if type(message) != type(False):
@@ -34,6 +35,7 @@ class SerialThread(threading.Thread):
 		self.ser_dispatcher = serial
 
 	def run(self):
+		print("Serial thread started")
 		while True:
 			self.ser_dispatcher.dispatch()
 
@@ -64,6 +66,7 @@ class HALThread(threading.Thread):
 
 	def run(self):
 		if self.interval_list:
+			print("HAL thread started")
 			while True:
 				for address, interval in self.interval_list.iteritems():
 					if self.next_wakeup[int(address)] <= self.__getMillis():
@@ -78,10 +81,13 @@ class GyroscopeThread(threading.Thread):
 		threading.Thread.__init__(self)
 		self.daemon = True
 
+		self.address = address
 		self.gy = gy.Gyroscope(address)
 
 	def run(self):
 		self.gy.initialize()
+
+		print("Gyroscope thread with address " + str(self.address) + " started")
 		while True:
 			sleep_time = self.gy.acquireData()
 			time.sleep(sleep_time)

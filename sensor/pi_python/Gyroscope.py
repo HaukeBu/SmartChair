@@ -88,8 +88,12 @@ class Gyroscope():
 			self.values_mutex.release()
 
 			sleep_time = ((1.0 / Constants.GYRO_SAMPLE_FREQUENCY) * 1000.0) - (end_time - start_time)
+			sleep_time = sleep_time / 1000
+			
+			if sleep_time <= 0:
+				sleep_time = 0
 
-			return sleep_time / 1000
+			return sleep_time
 
 		def getData(self):
 			if not self.initialized:

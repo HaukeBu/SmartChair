@@ -90,4 +90,5 @@ class GyroscopeThread(threading.Thread):
 		print("Gyroscope thread with address " + str(self.address) + " started")
 		while True:
 			sleep_time = self.gy.acquireData()
-			time.sleep(sleep_time)
+			if sleep_time > 0:
+				time.sleep(sleep_time)

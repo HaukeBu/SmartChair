@@ -1,6 +1,7 @@
 import hal_threads
 
 import serial_dispatcher
+import callbacks
 import os
 import constants
 import config
@@ -14,7 +15,7 @@ def main():
         if header.name in config.parsed_config:
             interval = int(config.parsed_config[header.name]['Interval'])
             if interval > 1:
-                function = getattr(cb,
+                function = getattr(callbacks,
                                    helper.uppercase_to_camelcase(header.name))
 
                 dispatcher.append_callback(header, function, interval)

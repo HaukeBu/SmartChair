@@ -1,10 +1,10 @@
 var grpc = require('grpc');
 
-var PROTO_PATH_HEARTBEAT_SERVICE = __dirname + '/../proto/Heartbeat.proto';
-var protoDescriptorHeartbeatService = grpc.load(PROTO_PATH_HEARTBEAT_SERVICE);
+var PROTO_PATH_HEARTBEAT_SERVICE = __dirname + '/../../proto/heartbeat.proto';
+var protoDescriptorHeartbeat = grpc.load(PROTO_PATH_HEARTBEAT_SERVICE);
 
 // The protoDescriptor object has the full package hierarchy
-var heartbeatService = protoDescriptorHeartbeatService.HeartbeatService;
+var heartbeatService = protoDescriptorHeartbeat.HeartbeatService;
 
 //// Internal Variables
 var localHeartbeatCheckIntervaInMilliseconds = 0;  // Test without Registry
@@ -14,12 +14,12 @@ var localId = null;
 
 // GRPC
 function heartbeatImpl(request) {
-    if(localId === request['localId']){
+    if(localId === request['local_id']){
         console.log("Heartbeat Received");
         heartbeatReceived = true;
         return request;
     } else {
-        console.log("Heartbeat Request got for localId: " + request['localId'] + ", but is: " + localId);
+        console.log("Heartbeat Request got for localId: " + request['local_id'] + ", but is: " + localId);
     }
 }
 

@@ -1,14 +1,14 @@
 // SmartChairHAL
 var grpc = require('grpc');
 
-var PROTO_PATH_CHAIR_SERVICE = __dirname + '/../proto/Chair.proto';
-var PROTO_PATH_SMART_CHAIR_STUDENT_INTERFACE_SERVICE = __dirname + '/../proto/SmartChairStudentInterface.proto';
+var PROTO_PATH_CHAIR = __dirname + '/../../proto/chair.proto';
+var PROTO_PATH_POLL_INTERFACE = __dirname + '/../../proto/poll_interface.proto';
 
-var protoDescriptorChairService = grpc.load(PROTO_PATH_CHAIR_SERVICE);
-var protoDescriptorSmartChairStudentInterfaceService = grpc.load(PROTO_PATH_SMART_CHAIR_STUDENT_INTERFACE_SERVICE);
+var protoDescriptorChair = grpc.load(PROTO_PATH_CHAIR);
+var protoDescriptorPollInterface = grpc.load(PROTO_PATH_POLL_INTERFACE);
 
-var chairService = protoDescriptorChairService.ChairService;
-var smartChairStudentInterfaceService = protoDescriptorSmartChairStudentInterfaceService.SmartChairStudentInterfaceService;
+var chairService = protoDescriptorChair.ChairService;
+var pollInterfaceService = protoDescriptorPollInterface.PollInterfaceService;
 
 const chair = {};
 chair['distance'] = {};
@@ -321,64 +321,11 @@ module.exports = {
     applyTestSeeds: function (printResult) {
         applyTestSeeds(printResult);
     }
-
-
-
-
-
-    /*
-    // Procedure Intermediates
-    getAllInt: function (call, callback){
-        callback(null, getAllImpl(call.request));
-    },
-    getDistanceInt: function (call, callback) {
-        callback(null, getDistanceImpl(call.request));
-    },
-    getTemperatureInt: function (call, callback) {
-        callback(null, getTemperatureImpl(call.request));
-    },
-    getPressureAllInt: function (call, callback) {
-        callback(null, getPressureAllImpl(call.request));
-    },
-    getPressureBackrestInt: function (call, callback) {
-        callback(null, getPressureBackrestImpl(call.request));
-    },
-    getPressureSeatInt: function (call, callback) {
-        callback(null, getPressureSeatImpl(call.request));
-    },
-    getMotionAllInt: function (call, callback) {
-        callback(null, getMotionAllImpl(call.request));
-    },
-    getMotionBackrestAllInt: function (call, callback) {
-        callback(null, getMotionBackrestAllImpl(call.request));
-    },
-    getMotionBackrestGyroscopeInt: function (call, callback) {
-        callback(null, getMotionBackrestGyroscopeImpl(call.request));
-    },
-    getMotionBackrestAccelerometerInt: function (call, callback) {
-        callback(null, getMotionBackrestAccelerometerImpl(call.request));
-    },
-    getMotionBackrestRotationAngleInt: function (call, callback) {
-        callback(null, getMotionBackrestRotationAngleImpl(call.request));
-    },
-    getMotionSeatAllInt: function (call, callback) {
-        callback(null, getMotionSeatAllImpl(call.request));
-    },
-    getMotionSeatGyroscopeInt: function (call, callback) {
-        callback(null, getMotionSeatGyroscopeImpl(call.request));
-    },
-    getMotionSeatAccelerometerInt: function (call, callback) {
-        callback(null, getMotionSeatAccelerometerImpl(call.request));
-    },
-    getMotionSeatRotationAngleInt: function (call, callback) {
-        callback(null, getMotionSeatRotationAngleImpl(call.request));
-    }
-    */
 };
 
 
 function initImpl(grpcServer) {
-    grpcServer.addService(smartChairStudentInterfaceService.service, {
+    grpcServer.addService(pollInterfaceService.service, {
         getAll: getAllInt,
         getDistance: getDistanceInt,
         getTemperature: getTemperatureInt,
@@ -400,7 +347,6 @@ function initImpl(grpcServer) {
         ChairUpdate: ChairUpdateInt
     });
 }
-
 
 function applyTestSeeds(printResult) {
     console.log("Apply Test Seeds");

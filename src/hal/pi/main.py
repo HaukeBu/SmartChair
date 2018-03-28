@@ -15,8 +15,7 @@ def main():
         if header.name in config.parsed_config:
             interval = int(config.parsed_config[header.name]['Interval'])
             if interval > 1:
-                function = getattr(callbacks,
-                                   helper.uppercase_to_camelcase(header.name))
+                function = getattr(callbacks, header.name.lower())
 
                 dispatcher.append_callback(header, function, interval)
 

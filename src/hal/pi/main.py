@@ -1,6 +1,6 @@
 import hal_threads
 
-import serial_dispatcher as sd
+import serial_dispatcher
 import os
 import constants
 import config

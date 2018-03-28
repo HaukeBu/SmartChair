@@ -49,7 +49,7 @@ function heartbeatExecution(localId, grpcServer) {
     heartbeatClient.heartbeat({
             'version':1,
             'timestamp': new Date().valueOf(),
-            'localId': localId
+            'local_id': localId
         }, function(err, response) {
             console.log("Object oid: " + entriesByLocalId[localId]['oid'] + " , localId: " + entriesByLocalId[localId]['localId'] + " , symbolic name: " + entriesByLocalId[localId]['symbolicName']);
             if(err !== null){
@@ -108,11 +108,11 @@ function registerObjectImpl(request) {
     var response = request;
     response['success'] = false;
 
-    response['localId'] = 'None';
+    response['local_id'] = 'None';
     if(isAddrUsed){
         console.log("Existing Entry Returned oid: " + entriesByLocalId[localIdOfUsedAddr]['oid'] + ", localId: " + localIdOfUsedAddr);
         // Return current localId
-        response['localId'] = localIdOfUsedAddr;
+        response['local_id'] = localIdOfUsedAddr;
         response['success'] = true;
         response['timestamp'] = new Date().valueOf();
     } else {

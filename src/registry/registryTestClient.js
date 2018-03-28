@@ -12,7 +12,7 @@ registryClient.requestObjects({
         'version':1,
         'timestamp': new Date().valueOf(),
         'oid': "0.0.1",
-        'requestId': 1
+        'request_id': 1
     }, function(err, response) {
         console.log("Error Message: ", err);
         console.log(err);

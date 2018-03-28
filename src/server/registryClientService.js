@@ -1,6 +1,6 @@
 var grpc = require('grpc');
 
-var PROTO_PATH_REGISTRY_SERVICE = __dirname + '/../proto/Registry.proto';
+var PROTO_PATH_REGISTRY_SERVICE = __dirname + '/../../proto/Registry.proto';
 var protoDescriptorRegistryService = grpc.load(PROTO_PATH_REGISTRY_SERVICE);
 
 // The protoDescriptor object has the full package hierarchy
@@ -34,9 +34,9 @@ function registerImpl(registryGrpcAddressParam, registrationInformationParam, lo
             'version':1,
             'timestamp': new Date().valueOf(),
             'oid': registrationInformation['oid'],
-            'symbolicName': registrationInformation['symbolicName'],
-            'grpcServer': registrationInformation['serverAddress'] ,
-            'requestId': 1
+            'symbolic_name': registrationInformation['symbolicName'],
+            'grpc_server': registrationInformation['serverAddress'] ,
+            'request_id': 1
         }, function(err, response) {
 
             console.log("Error Message: ", err);
@@ -45,7 +45,7 @@ function registerImpl(registryGrpcAddressParam, registrationInformationParam, lo
             console.log(response);
 
             if(response !== undefined && response['success']){
-                localId = response['localId'];
+                localId = response['local_id'];
                 heartbeatService.setLocalId(localId);
                 console.log("New LocalId set:" + localId);
             }

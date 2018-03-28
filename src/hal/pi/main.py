@@ -11,8 +11,8 @@ import hal
 def main():
     dispatcher = serial_dispatcher.SerialDispatcher()
     for header in constants.SerialHeader:
-        if header.name in config.config:
-            interval = int(config.config[header.name]['Interval'])
+        if header.name in config.parsed_config:
+            interval = int(config.parsed_config[header.name]['Interval'])
             if interval > 1:
                 function = getattr(cb,
                                    helper.uppercase_to_camelcase(header.name))
@@ -29,8 +29,8 @@ def main():
     hal_instance = hal.HAL()
     for element in constants.GyroscopeType:
         name = "GYROSCOPE_" + element.name
-        interval = int(config.config[name]['Interval'])
-        address = int(config.config[name]['Address'], 16)
+        interval = int(config.parsed_config[name]['Interval'])
+        address = int(config.parsed_config[name]['Address'], 16)
         if interval > 0:
             hal_instance.append_callback(address, interval)
 

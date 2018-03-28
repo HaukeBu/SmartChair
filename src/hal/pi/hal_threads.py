@@ -3,7 +3,6 @@ import grpc_handler
 import time
 import hal
 import constants
-import config
 import callbacks
 import gyroscope
 import sys
@@ -71,7 +70,7 @@ class HALThread(threading.Thread):
                 for address, interval in self.interval_list.iteritems():
                     if self.next_wakeup[int(address)] <= self.__get_millis():
                         sensor_data = self.hal_instance.get_data(address)
-                        
+
                         callbacks.gyroscope(address, sensor_data)
 
                         self.next_wakeup[address] = interval + self.__get_millis()

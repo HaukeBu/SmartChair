@@ -1,7 +1,5 @@
 import gyroscope
-import config
 import constants
-import hal_threads
 
 class HAL():
     __instance = None

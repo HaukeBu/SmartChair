@@ -39,15 +39,17 @@ function registerImpl(registryGrpcAddressParam, registrationInformationParam, lo
             'request_id': 1
         }, function(err, response) {
 
-            console.log("Error Message: ", err);
-            console.log(err);
-            console.log("Response:      ", response);
-            console.log(response);
-
             if(response !== undefined && response['success']){
                 localId = response['local_id'];
                 heartbeatService.setLocalId(localId);
                 console.log("New LocalId set:" + localId);
+            } else {
+                console.log("************************************************************");
+                console.log("Error Message: ");
+                console.log(err);
+                console.log("");
+                console.log("Is the Registry running and the correct addresses are used?");
+                console.log("************************************************************");
             }
         }
     );

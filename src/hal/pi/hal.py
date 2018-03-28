@@ -1,5 +1,6 @@
 import gyroscope
 import constants
+import hal_threads
 
 class HAL():
     __instance = None
@@ -13,7 +14,7 @@ class HAL():
                   constants.GyroscopeType(address).name +
                   ", Interval = " + str(interval))
 
-            thread = Threads.GyroscopeThread(address)
+            thread = hal_threads.GyroscopeThread(address)
             thread.start()
 
             self.interval_list[address] = interval

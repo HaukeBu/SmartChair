@@ -1,15 +1,15 @@
 syntax = "proto3";
 
-service SmartChairStudentInterfaceService{
+service PollInterfaceService{
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // get All Values
     //
-    rpc getAll (ChairRequest) returns (ChairResponse) {}
+    rpc getAll (PollInterfaceRequest) returns (PollInterfaceResponse) {}
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Distance
     //
-    rpc getDistance (ChairRequest) returns (ChairResponse) {}
+    rpc getDistance (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "distance": {
@@ -22,7 +22,7 @@ service SmartChairStudentInterfaceService{
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Temperature
     //
-    rpc getTemperature (ChairRequest) returns (ChairResponse) {}
+    rpc getTemperature (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "temperature": {
@@ -35,7 +35,7 @@ service SmartChairStudentInterfaceService{
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Pressure
     //
-    rpc getPressureAll (ChairRequest) returns (ChairResponse) {}
+    rpc getPressureAll (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "backrest": {
@@ -47,7 +47,7 @@ service SmartChairStudentInterfaceService{
     //          "timestamp":1520442151
     //      }
     // }
-    rpc getPressureBackrest (ChairRequest) returns (ChairResponse) {}
+    rpc getPressureBackrest (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "backrest": {
@@ -55,7 +55,7 @@ service SmartChairStudentInterfaceService{
     //          "timestamp":1520442151
     //      }
     // }
-    rpc getPressureSeat (ChairRequest) returns (ChairResponse) {}
+    rpc getPressureSeat (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "seat": {
@@ -67,7 +67,7 @@ service SmartChairStudentInterfaceService{
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Gyroscope
     //
-    rpc getMotionAll (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionAll (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "backrest":{
@@ -83,7 +83,7 @@ service SmartChairStudentInterfaceService{
     //          "timestamp":1520442151
     //      }
     // }
-    rpc getMotionBackrestAll (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionBackrestAll (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "rotationAngle": [],
@@ -91,26 +91,26 @@ service SmartChairStudentInterfaceService{
     //      "gyroscope": [],
     //      "timestamp":1520442151
     // }
-    rpc getMotionBackrestGyroscope (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionBackrestGyroscope (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "gyroscope": [],
     //      "timestamp":1520442151
     // }
-    rpc getMotionBackrestAccelerometer (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionBackrestAccelerometer (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "acceleration": [],
     //      "timestamp":1520442151
     // }
-    rpc getMotionBackrestRotationAngle (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionBackrestRotationAngle (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "rotationAngle": [],
     //      "timestamp":1520442151
     // }
 
-    rpc getMotionSeatAll (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionSeatAll (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "rotationAngle": [],
@@ -118,20 +118,20 @@ service SmartChairStudentInterfaceService{
     //      "gyroscope": [],
     //      "timestamp":1520442151
     // }
-    rpc getMotionSeatGyroscope (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionSeatGyroscope (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "gyroscope": [],
     //      "timestamp":1520442151
     // }
-    rpc getMotionSeatAccelerometer (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionSeatAccelerometer (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "acceleration": [],
     //      "timestamp":1520442151
     // }
 
-    rpc getMotionSeatRotationAngle (ChairRequest) returns (ChairResponse) {}
+    rpc getMotionSeatRotationAngle (PollInterfaceRequest) returns (PollInterfaceResponse) {}
     // json:
     // {
     //      "rotationAngle": [],
@@ -139,13 +139,13 @@ service SmartChairStudentInterfaceService{
     // }
 }
 
-message ChairResponse{
+message PollInterfaceResponse{
     int32 version = 1;			// Protocol version between OE HAL and device
     bool success = 2;           // Success of the request
     int64 timestamp = 3;		// UTC timestamp of Request processing
     string json = 4;			// JSON set containing elements with format
 }
 
-message ChairRequest{
+message PollInterfaceRequest{
     int32 version = 1;          // Request Version
 }

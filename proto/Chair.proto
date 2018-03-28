@@ -11,10 +11,10 @@ class GRPCHeader(Enum):
 */
 
 service ChairService{
-	rpc ChairUpdate (Chair) returns (ChairResponse) {}
+	rpc ChairUpdate (ChairInformation) returns (ChairResponse) {}
 }
 
-message Chair{
+message ChairInformation{
 	int32 version = 1;			// Protocol version between OE HAL and device
 	int64 timestamp = 2;		// UTC timestamp in milliseconds resolution from creation of message
 	int32 sensor_type = 3;		// Type ID of sensor (unique between OE HAL and device)

@@ -10,7 +10,7 @@ class HAL():
 
         def append_callback(self, address, interval):
             print("Add new callback function for GYROSCOPE_" +
-                  Constants.GyroscopeType(address).name +
+                  constants.GyroscopeType(address).name +
                   ", Interval = " + str(interval))
 
             thread = Threads.GyroscopeThread(address)

@@ -35,9 +35,9 @@ def main():
             hal_instance.append_callback(address, interval)
 
 
-    serial_thread = Threads.SerialThread(dispatcher)
-    hal_thread = Threads.HALThread()
-    message_thread = Threads.MessageThread()
+    serial_thread = hal_threads.SerialThread(dispatcher)
+    hal_thread = hal_threads.HALThread()
+    message_thread = hal_threads.MessageThread()
 
     print("Start threads...")
     serial_thread.start()

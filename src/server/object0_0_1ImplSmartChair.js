@@ -41,6 +41,8 @@ function processMessage(request) {
 
     var timestamp = request['timestamp'];
 
+    console.log("processMessage: ", request);
+
     // select sensor_type
     switch (request['sensor_type']) {
         case 0 :

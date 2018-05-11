@@ -1,6 +1,6 @@
 var grpc = require('grpc');
 
-var PROTO_PATH_REGISTRY_SERVICE = __dirname + '/../../proto/Registry.proto';
+var PROTO_PATH_REGISTRY_SERVICE = __dirname + '/../../proto/registry.proto';
 var protoDescriptorRegistryService = grpc.load(PROTO_PATH_REGISTRY_SERVICE);
 
 // The protoDescriptor object has the full package hierarchy

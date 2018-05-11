@@ -1,8 +1,9 @@
 {
   "symbolicName": "smartchair4",
   "oid": "0.0.1",
-  "serverAddress": "0.0.0.0:50051",
-  "registryAddress": "0.0.0.0:50052",
+  "serverAddressBind": "0.0.0.0:50051",
+  "serverAddressSend": "192.168.188.39:50051",
+  "registryAddress": "CaDS-NUC:50052",
   "deviceAddress": "",
   "registryConnectionCheckIntervalMs": 20000,
   "objectImplFileName": "./object0_0_1ImplSmartChair.js"

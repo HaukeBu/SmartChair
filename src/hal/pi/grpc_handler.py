@@ -65,7 +65,8 @@ class GRPCHandler():
                 try:
                     self.grpc_service.ChairUpdate(message)
                     return True
-                except:
+                except grpc.RpcError as e:
+                    print('GRPC send_message:: error sending message ' + str(e))
                     return False
 
     def __init__(self):

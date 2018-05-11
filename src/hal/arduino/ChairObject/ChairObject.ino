@@ -344,9 +344,11 @@ void loop(){
 	uint16_t temperature = 0;
 	uint16_t distance = 0;
 
+   //unsigned long start_time = millis();
+
 	if (Serial.available() && Serial.read() == SERIAL_READ_START){
 		// Return with debug message
-		uint16_t ret = (uint16_t) readData();
+	  uint16_t ret = (uint16_t) readData();
 		sendData(DEBUG, 1, &ret);
 	}
 
@@ -368,9 +370,14 @@ void loop(){
 		setNextMeasure(PRESSURE_SEAT);
 	}
 
-	if (canMeasure(TEMPERATURE)){
+	/*if (canMeasure(TEMPERATURE)){
 		getTemperature(&temperature);
 		sendData(TEMPERATURE, 1, &temperature);
 		setNextMeasure(TEMPERATURE);
-	}
+	}*/
+
+/*
+    uint16_t ret = (uint16_t) (millis() - start_time);
+    sendData(DEBUG, 1, &ret);
+*/
 }
